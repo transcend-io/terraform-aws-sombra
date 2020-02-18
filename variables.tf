@@ -17,11 +17,6 @@ variable ecr_image {
   default     = "829095311197.dkr.ecr.eu-west-1.amazonaws.com/sombra:prod"
 }
 
-# TODO: Conditionally create this
-variable cluster_id {
-  description = "ID of the ECS cluster this service should run in"
-}
-
 variable desired_count {
   description = "The number of ECS tasks that the service should keep alive"
 }
@@ -100,6 +95,11 @@ variable tls_config {
 ######################
 # Optional Variables #
 ######################
+
+variable cluster_id {
+  description = "ID of the ECS cluster this service should run in"
+  default = ""
+}
 
 variable "alb_access_logs" {
   description = "Map containing access logging configuration for the load balancer."
