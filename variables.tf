@@ -12,14 +12,9 @@ variable vpc_id {
   description = "The ID of the VPC to put this application into"
 }
 
-# TODO: Conditionally create this
-variable log_bucket_name {
-  description = "The name of the s3 bucket to log alb access requests to"
-}
-
-# TODO: Default this to the main sombra ECR repo we share with clients
 variable ecr_image {
   description = "Url of the ECR repo, including the tag"
+  default     = "829095311197.dkr.ecr.eu-west-1.amazonaws.com/sombra:prod"
 }
 
 # TODO: Conditionally create this
@@ -105,6 +100,12 @@ variable tls_config {
 ######################
 # Optional Variables #
 ######################
+
+variable "alb_access_logs" {
+  description = "Map containing access logging configuration for the load balancer."
+  type        = map(string)
+  default     = {}
+}
 
 variable incoming_cidr_range {
   description = <<EOF

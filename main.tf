@@ -4,15 +4,12 @@
 
 module load_balancer {
   source  = "terraform-aws-modules/alb/aws"
-  version = "~> 4.0"
+  version = "~> 5.0"
 
   # General Settings
-  load_balancer_name         = "${var.deploy_env}-sombra-${var.project_id}-alb"
+  name                       = "${var.deploy_env}-sombra-${var.project_id}-alb"
   enable_deletion_protection = false
-
-  # Log settings
-  log_bucket_name     = var.log_bucket_name
-  log_location_prefix = "${var.deploy_env}-alb-sombra-${var.project_id}"
+  access_logs                = var.alb_access_logs
 
   # VPC Settings
   subnets         = var.public_subnet_ids
@@ -36,7 +33,6 @@ module load_balancer {
       target_group_index = 1
     },
   ]
-  https_listeners_count = 2
 
   # Target groups
   target_groups = [
@@ -59,7 +55,6 @@ module load_balancer {
       health_check_port = var.external_port
     },
   ]
-  target_groups_count = 2
 }
 
 resource "aws_security_group" "alb" {
@@ -275,8 +270,8 @@ resource "aws_route53_record" "alb_alias" {
   type    = "A"
 
   alias {
-    name                   = module.load_balancer.dns_name
-    zone_id                = module.load_balancer.load_balancer_zone_id
+    name                   = module.load_balancer.this_lb_dns_name
+    zone_id                = module.load_balancer.this_lb_id
     evaluate_target_health = false
   }
 }
