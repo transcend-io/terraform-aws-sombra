@@ -196,7 +196,7 @@ module service {
   desired_count          = var.desired_count
   cpu                    = var.cpu
   memory                 = var.memory
-  cluster_id             = var.cluster_id
+  cluster_id             = local.cluster_id
   vpc_id                 = var.vpc_id
   subnet_ids             = var.private_subnet_ids
   alb_security_group_ids = [aws_security_group.alb.id]
@@ -232,6 +232,19 @@ module service {
   deploy_env = var.deploy_env
   aws_region = var.aws_region
   tags       = var.tags
+}
+
+###############
+# ECS Cluster #
+###############
+
+resource "aws_ecs_cluster" "cluster" {
+  count = var.cluster_id == "" ? 1 : 0
+  name  = "${var.deploy_env}-${var.project_id}-sombra-cluster"
+}
+
+locals {
+  cluster_id = var.cluster_id == "" ? aws_ecs_cluster.cluster[0].id : var.cluster_id
 }
 
 ##############
