@@ -284,7 +284,7 @@ resource "aws_route53_record" "alb_alias" {
 
   alias {
     name                   = module.load_balancer.this_lb_dns_name
-    zone_id                = module.load_balancer.this_lb_id
+    zone_id                = module.load_balancer.this_lb_zone_id
     evaluate_target_health = false
   }
 }
