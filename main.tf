@@ -38,21 +38,31 @@ module load_balancer {
   target_groups = [
     # Internal group
     {
-      name              = "${var.deploy_env}-${var.project_id}-internal"
-      health_check_path = "/health"
-      backend_protocol  = "HTTPS"
-      target_type       = "ip"
-      backend_port      = var.internal_port
-      health_check_port = var.internal_port
+      name             = "${var.deploy_env}-${var.project_id}-internal"
+      backend_protocol = "HTTPS"
+      target_type      = "ip"
+      backend_port     = var.internal_port
+      health_check = {
+        enabled  = true
+        interval = 30
+        port     = var.internal_port
+        path     = "/health"
+        protocol = "HTTPS"
+      }
     },
     # External group
     {
-      name              = "${var.deploy_env}-${var.project_id}-external"
-      health_check_path = "/health"
-      backend_protocol  = "HTTPS"
-      target_type       = "ip"
-      backend_port      = var.external_port
-      health_check_port = var.external_port
+      name             = "${var.deploy_env}-${var.project_id}-external"
+      backend_protocol = "HTTPS"
+      target_type      = "ip"
+      backend_port     = var.external_port
+      health_check = {
+        enabled  = true
+        interval = 30
+        port     = var.internal_port
+        path     = "/health"
+        protocol = "HTTPS"
+      }
     },
   ]
 }
