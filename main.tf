@@ -59,7 +59,7 @@ module load_balancer {
       health_check = {
         enabled  = true
         interval = 30
-        port     = var.internal_port
+        port     = var.external_port
         path     = "/health"
         protocol = "HTTPS"
       }
