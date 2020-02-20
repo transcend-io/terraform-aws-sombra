@@ -77,7 +77,7 @@ resource "aws_security_group" "alb" {
     protocol    = "tcp"
     from_port   = var.external_port
     to_port     = var.external_port
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.transcend_backend_ips
   }
 
   # Allow internal port from the calling companies IP range
