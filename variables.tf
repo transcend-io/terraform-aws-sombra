@@ -118,6 +118,12 @@ variable incoming_cidr_range {
   default     = "0.0.0.0/0"
 }
 
+variable transcend_backend_ips {
+  type = list(string)
+  default = ["52.215.231.215/32", "63.34.48.255/32"]
+  description = "The IP addresses of Transcend"
+}
+
 variable use_local_kms {
   default     = true
   description = "When true, local KMS will be used. When false, AWS will be used"
