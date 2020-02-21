@@ -85,7 +85,7 @@ resource "aws_security_group" "alb" {
     protocol    = "tcp"
     from_port   = var.internal_port
     to_port     = var.internal_port
-    cidr_blocks = [var.incoming_cidr_range]
+    cidr_blocks = var.incoming_cidr_ranges
   }
 
   egress {
