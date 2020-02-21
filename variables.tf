@@ -107,7 +107,8 @@ variable "alb_access_logs" {
   default     = {}
 }
 
-variable incoming_cidr_range {
+variable incoming_cidr_ranges {
+  type = list(string)
   description = <<EOF
   If you want to restrict the IP addresses that can talk to the
   internal sombra service, you can do so with this cidr block.
@@ -115,7 +116,7 @@ variable incoming_cidr_range {
   Oftentimes, this will be the cidr block of the VPC containing the
   application you are calling the sombra api from.
   EOF
-  default     = "0.0.0.0/0"
+  default     = ["0.0.0.0/0"]
 }
 
 variable transcend_backend_ips {
