@@ -152,7 +152,7 @@ module container_definition {
     ENCRYPTED_SAAS_HTTP_METHODS = join(",", var.encrypted_saas_http_methods)
 
     # Global Settings
-    ORGANIZATION_URI                    = var.subdomain
+    ORGANIZATION_URI                    = var.organization_uri
     DATA_SUBJECT_AUTHENTICATION_METHODS = join(",", var.data_subject_auth_methods)
     EMPLOYEE_AUTHENTICATION_METHODS     = join(",", var.employee_auth_methods)
 

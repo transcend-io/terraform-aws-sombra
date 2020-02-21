@@ -8,6 +8,10 @@ variable project_id {
   EOF
 }
 
+variable organization_uri {
+  description = "The unique URI for you organization from Transcend."
+}
+
 variable vpc_id {
   description = "The ID of the VPC to put this application into"
 }
