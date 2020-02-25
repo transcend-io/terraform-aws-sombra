@@ -3,109 +3,31 @@
 #################
 
 module load_balancer {
-  source  = "terraform-aws-modules/alb/aws"
-  version = "~> 5.0"
+  source = "./modules/sombra_load_balancers"
 
   # General Settings
-  name                       = "${var.deploy_env}-sombra-${var.project_id}-alb"
-  enable_deletion_protection = false
-  access_logs                = var.alb_access_logs
+  deploy_env = var.deploy_env
+  project_id = var.project_id
+  alb_access_logs = var.alb_access_logs
 
-  # VPC Settings
-  subnets         = var.public_subnet_ids
-  vpc_id          = var.vpc_id
-  security_groups = [aws_security_group.alb.id]
+  # Ports and Firewall settings
+  internal_port         = var.internal_port
+  external_port         = var.external_port
+  transcend_backend_ips = var.transcend_backend_ips
+  incoming_cidr_ranges  = var.incoming_cidr_ranges
 
-  # Listeners
-  https_listeners = [
-    # Internal Listener
-    {
-      certificate_arn    = var.certificate_arn
-      port               = var.internal_port
-      ssl_policy         = "ELBSecurityPolicy-2016-08"
-      target_group_index = 0
-    },
-    # External Listener
-    {
-      certificate_arn    = var.certificate_arn
-      port               = var.external_port
-      ssl_policy         = "ELBSecurityPolicy-FS-2018-06"
-      target_group_index = 1
-    },
-  ]
+  # VPC settings
+  vpc_id                      = var.vpc_id
+  public_subnet_ids           = var.public_subnet_ids
+  private_subnet_ids          = var.private_subnet_ids
+  private_subnets_cidr_blocks = var.private_subnets_cidr_blocks
 
-  # Target groups
-  target_groups = [
-    # Internal group
-    {
-      name             = "${var.deploy_env}-${var.project_id}-internal"
-      backend_protocol = "HTTPS"
-      target_type      = "ip"
-      backend_port     = var.internal_port
-      health_check = {
-        enabled  = true
-        interval = 30
-        port     = var.internal_port
-        path     = "/health"
-        protocol = "HTTPS"
-      }
-    },
-    # External group
-    {
-      name             = "${var.deploy_env}-${var.project_id}-external"
-      backend_protocol = "HTTPS"
-      target_type      = "ip"
-      backend_port     = var.external_port
-      health_check = {
-        enabled  = true
-        interval = 30
-        port     = var.external_port
-        path     = "/health"
-        protocol = "HTTPS"
-      }
-    },
-  ]
-}
-
-resource "aws_security_group" "alb" {
-  name        = "${var.deploy_env}-${var.project_id}-sombra-alb-security-group"
-  description = "Security group for sombra alb"
-  vpc_id      = var.vpc_id
-
-  # Allow external port
-  ingress {
-    protocol    = "tcp"
-    from_port   = var.external_port
-    to_port     = var.external_port
-    cidr_blocks = var.transcend_backend_ips
-  }
-
-  # Allow internal port from the calling companies IP range
-  ingress {
-    protocol    = "tcp"
-    from_port   = var.internal_port
-    to_port     = var.internal_port
-    cidr_blocks = var.incoming_cidr_ranges
-  }
-
-  egress {
-    protocol    = "tcp"
-    from_port   = var.internal_port
-    to_port     = var.internal_port
-    cidr_blocks = var.private_subnets_cidr_blocks
-  }
-
-  egress {
-    protocol    = "tcp"
-    from_port   = var.external_port
-    to_port     = var.external_port
-    cidr_blocks = var.private_subnets_cidr_blocks
-  }
-
-  timeouts {
-    create = "45m"
-    delete = "45m"
-  }
+  # DNS Settings
+  subdomain = var.subdomain
+  root_domain = var.root_domain
+  zone_id = var.zone_id
+  certificate_arn = var.certificate_arn
+  use_private_load_balancer = var.use_private_load_balancer
 }
 
 ############
@@ -209,7 +131,7 @@ module service {
   cluster_id             = local.cluster_id
   vpc_id                 = var.vpc_id
   subnet_ids             = var.private_subnet_ids
-  alb_security_group_ids = [aws_security_group.alb.id]
+  alb_security_group_ids = module.load_balancer.security_group_ids
   container_definitions = format(
     "[%s]",
     join(",", setunion(
@@ -227,13 +149,13 @@ module service {
   load_balancers = [
     # Internal target group manager
     {
-      target_group_arn = module.load_balancer.target_group_arns[0]
+      target_group_arn = module.load_balancer.internal_target_group_arn
       container_name   = module.container_definition.container_name
       container_port   = var.internal_port
     },
     # External target group manager
     {
-      target_group_arn = module.load_balancer.target_group_arns[1]
+      target_group_arn = module.load_balancer.external_target_group_arn
       container_name   = module.container_definition.container_name
       container_port   = var.external_port
     }
@@ -281,20 +203,4 @@ resource "aws_iam_policy" "kms_policy" {
   name        = "${var.deploy_env}-${var.project_id}-sombra-kms-policy"
   description = "Allows Sombra instances to get the KMS key"
   policy      = data.aws_iam_policy_document.kms_policy_doc.json
-}
-
-#######
-# DNS #
-#######
-
-resource "aws_route53_record" "alb_alias" {
-  zone_id = var.zone_id
-  name    = "${var.subdomain}.${var.root_domain}"
-  type    = "A"
-
-  alias {
-    name                   = module.load_balancer.this_lb_dns_name
-    zone_id                = module.load_balancer.this_lb_zone_id
-    evaluate_target_health = false
-  }
 }
