@@ -3,9 +3,7 @@
 ######################
 
 variable project_id {
-  description = <<EOF
-  A name to use in resources, such as the name of your company.
-  EOF
+  description = "A name to use in resources, such as the name of your company."
 }
 
 variable organization_uri {
@@ -32,7 +30,7 @@ variable public_subnet_ids {
 
 variable private_subnet_ids {
   type        = list(string)
-  description = "The subnets the ECS tasks can be placed into"
+  description = "The subnets the ECS tasks can be placed into, as well as the internal load balancer if desired"
 }
 
 variable private_subnets_cidr_blocks {
@@ -41,7 +39,7 @@ variable private_subnets_cidr_blocks {
 }
 
 variable zone_id {
-  description = "The ID of the Route53 hosted zone where the sombra subdomain will be created"
+  description = "The ID of the Route53 hosted zone where the public sombra subdomain will be created"
 }
 
 variable certificate_arn {
@@ -102,7 +100,7 @@ variable tls_config {
 
 variable cluster_id {
   description = "ID of the ECS cluster this service should run in"
-  default = ""
+  default     = ""
 }
 
 variable "alb_access_logs" {
@@ -112,7 +110,7 @@ variable "alb_access_logs" {
 }
 
 variable incoming_cidr_ranges {
-  type = list(string)
+  type        = list(string)
   description = <<EOF
   If you want to restrict the IP addresses that can talk to the
   internal sombra service, you can do so with this cidr block.
@@ -124,8 +122,8 @@ variable incoming_cidr_ranges {
 }
 
 variable transcend_backend_ips {
-  type = list(string)
-  default = ["52.215.231.215/32", "63.34.48.255/32"]
+  type        = list(string)
+  default     = ["52.215.231.215/32", "63.34.48.255/32"]
   description = "The IP addresses of Transcend"
 }
 
@@ -324,6 +322,18 @@ variable extra_task_policy_arns {
   permissions.
   EOF
   default     = []
+}
+
+variable use_private_load_balancer {
+  type        = bool
+  default     = false
+  description = <<EOF
+  If true, the internal load balancer will not have publically accessible DNS.
+
+  Use this if you plan to put this module into the same VPC as your backend,
+  or if you want to set up VPC Peering from your backend to the VPC that holds
+  the Sombra load balancers.
+  EOF
 }
 
 variable tags {
