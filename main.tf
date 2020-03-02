@@ -6,8 +6,8 @@ module load_balancer {
   source = "./modules/sombra_load_balancers"
 
   # General Settings
-  deploy_env = var.deploy_env
-  project_id = var.project_id
+  deploy_env      = var.deploy_env
+  project_id      = var.project_id
   alb_access_logs = var.alb_access_logs
 
   # Ports and Firewall settings
@@ -23,11 +23,13 @@ module load_balancer {
   private_subnets_cidr_blocks = var.private_subnets_cidr_blocks
 
   # DNS Settings
-  subdomain = var.subdomain
-  root_domain = var.root_domain
-  zone_id = var.zone_id
-  certificate_arn = var.certificate_arn
+  subdomain                 = var.subdomain
+  root_domain               = var.root_domain
+  zone_id                   = var.zone_id
+  certificate_arn           = var.certificate_arn
   use_private_load_balancer = var.use_private_load_balancer
+
+  tags = var.tags
 }
 
 ############
@@ -173,6 +175,7 @@ module service {
 resource "aws_ecs_cluster" "cluster" {
   count = var.cluster_id == "" ? 1 : 0
   name  = "${var.deploy_env}-${var.project_id}-sombra-cluster"
+  tags  = var.tags
 }
 
 locals {

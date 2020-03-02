@@ -43,6 +43,8 @@ module internal_load_balancer {
       protocol = "HTTPS"
     }
   }]
+
+  tags = var.tags
 }
 
 module "internal_security_group" {
@@ -70,6 +72,8 @@ module "internal_security_group" {
     cidr_blocks = join(",", var.private_subnets_cidr_blocks)
     description = "Allow the ALB to talk to the internal service"
   }]
+
+  tags = var.tags
 }
 
 #############################################
@@ -139,6 +143,8 @@ module external_load_balancer {
       protocol = "HTTPS"
     }
   }]
+
+  tags = var.tags
 }
 
 module "external_security_group" {
@@ -166,6 +172,8 @@ module "external_security_group" {
     cidr_blocks = join(",", var.private_subnets_cidr_blocks)
     description = "Allow the ALB to talk to the external service"
   }]
+
+  tags = var.tags
 }
 
 ###########################################################
