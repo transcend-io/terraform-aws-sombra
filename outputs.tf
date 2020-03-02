@@ -7,3 +7,8 @@ output external_url {
   value = "https://${var.subdomain}.${var.root_domain}:${var.external_port}"
   description = "Url of the external sombra service. It is publically accessible"
 }
+
+output private_zone_id {
+  value = module.load_balancer.private_zone_id
+  description = "The hosted zone id of the private zone for the internal load balancer, if a private zone exists"
+}
