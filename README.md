@@ -35,6 +35,28 @@ This is a logically separated application with one open port on the company priv
 
 ![Step 2: Your systems upload data to Transcend, via Sombra](https://i.imgur.com/5Ckqv2m.png)
 
+## Using Sombra in a Separate VPC
+
+You need to be able to communicate with Sombra's internal load balancer and port from your backend. There are two options:
+
+1. You can leave `var.use_private_load_balancer` set to false, which will allow you to talk to sombra over TCP. If you go this route, make sure to set `var.incoming_cidr_ranges` to the public DNS CIDR blocks for your backend.
+2. You can communicate through a VPC Peering Connection. This way, all of your communication with the internal ALB can happen over private DNS. To accomplish this, you'll need to:
+
+- Set up VPC peering. I'd recommend checking out https://registry.terraform.io/modules/cloudposse/vpc-peering/aws/0.3.0
+- Set `var.use_private_load_balancer` to true on this module
+- Make sure your backends security group can communicate to private subnet CIDR blocks from the VPC containing this module
+- Set `var.incoming_cidr_ranges` to be the private CIDR blocks from your backend's VPC
+- Add your backend's VPC to the private hosted zone association, with something like:
+
+```hcl
+resource "aws_route53_zone_association" "private_sombra_zone" {
+  zone_id = module.sombra.private_zone_id
+  vpc_id  = module.your_peered_vpc.vpc_id
+}
+```
+
+After that, you can reference the `internal_url` output from your backend over HTTPS.
+
 <p align="center">
   <img alt="Sombra" src="https://i.imgur.com/t6rhSmW.png" height="300px" />
   <br />
