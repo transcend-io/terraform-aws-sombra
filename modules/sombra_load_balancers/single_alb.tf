@@ -67,6 +67,8 @@ module load_balancer {
       }
     },
   ]
+
+  tags = var.tags
 }
 
 module "single_security_group" {
@@ -112,6 +114,8 @@ module "single_security_group" {
       description = "Allow talking to the external sombra service"
     },
   ]
+
+  tags = var.tags
 }
 
 ##################################################

@@ -95,3 +95,9 @@ variable root_domain {
 variable zone_id {
   description = "The ID of the Route53 hosted zone where the public sombra subdomain will be created"
 }
+
+variable tags {
+  type        = map(string)
+  description = "Tags to apply to all resources that support them"
+  default     = {}
+}
