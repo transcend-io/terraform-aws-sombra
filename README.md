@@ -10,7 +10,7 @@
 </p>
 <p align="center">
   <a href="https://registry.terraform.io/modules/transcend-io/sombra/aws">
-    <img alt="Sombra Terraform Module" src="https://i.imgur.com/jPbpAhr.png">
+    <img alt="Sombra Terraform Module" src="https://i.imgur.com/jPbpAhr.png" height="206px">
     View on the Terraform Module Registry
   </a>
 </p>
