@@ -1,7 +1,7 @@
 <!-- markdownlint-disable MD041 MD033 -->
 
 <p align="center">
-    <img alt="Sombra" src="https://i.imgur.com/g3vxyZ0.png" height="200px"/>
+    <img alt="Sombra" src="https://i.imgur.com/g3vxyZ0.png"/>
 </p>
 <h1 align="center">Deploy Sombra with Terraform</h1>
 <p align="center">
