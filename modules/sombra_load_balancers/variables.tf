@@ -96,6 +96,12 @@ variable zone_id {
   description = "The ID of the Route53 hosted zone where the public sombra subdomain will be created"
 }
 
+variable override_alb_name {
+  type = string
+  default = null
+  description ="If set as a string, this custom name will be used on the alb resources"
+}
+
 variable tags {
   type        = map(string)
   description = "Tags to apply to all resources that support them"

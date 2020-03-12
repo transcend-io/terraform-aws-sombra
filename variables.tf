@@ -91,7 +91,26 @@ variable tls_config {
     cert       = string
     key        = string
   })
-  description = "Sombra TLS Support. These values are sensitive."
+  default = {
+    passphrase = null
+    cert = null
+    key = null
+  }
+  description = <<EOF
+  Sombra TLS Support. These values are sensitive, and should be kept secret.
+
+  We support quite a few options for this:
+  - Not configuring TLS at all, by leaving this variable empty. This is not recommended,
+    but is the easiest to setup. If you choose to go this route, you will rely on the TLS termination
+    at the load balancer only, and your communication from the ALB -> sombra instances will be unencrypted
+    inside your VPC.
+  - Adding a cert and key without a passphrase. To do this, add your cert and key here (as base64 encoded values)
+    and set the passphrase to either `null` or the empty string. This approach works well for those using the
+    `tls` terraform provider for generating certs.
+  - Adding a cert with an encoded key with the passphrase to unlock it. To do this, you'll need to manage the certs
+    fully on your own, but you can add the certs here as base64 encoded values (passphrase in plaintext). 
+    This is how we recommend you manage your TLS support.
+  EOF
 }
 
 ######################
@@ -334,6 +353,12 @@ variable use_private_load_balancer {
   or if you want to set up VPC Peering from your backend to the VPC that holds
   the Sombra load balancers.
   EOF
+}
+
+variable override_alb_name {
+  type = string
+  default = null
+  description ="If set as a string, this custom name will be used on the alb resources"
 }
 
 variable tags {
