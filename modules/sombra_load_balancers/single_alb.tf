@@ -2,6 +2,11 @@
 # Load Balancer #
 #################
 
+locals {
+  should_override_name = try(length(var.override_alb_name) > 0, false)
+  alb_name = local.should_override_name ? var.override_alb_name : "${var.project_id}-sombra-alb"
+}
+
 module load_balancer {
   source  = "terraform-aws-modules/alb/aws"
   version = "~> 5.0"
@@ -9,7 +14,7 @@ module load_balancer {
   create_lb = ! var.use_private_load_balancer
 
   # General Settings
-  name                       = "${var.project_id}-sombra-alb"
+  name                       = local.alb_name
   enable_deletion_protection = false
   access_logs                = var.alb_access_logs
 

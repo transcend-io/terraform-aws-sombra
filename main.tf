@@ -6,9 +6,10 @@ module load_balancer {
   source = "./modules/sombra_load_balancers"
 
   # General Settings
-  deploy_env      = var.deploy_env
-  project_id      = var.project_id
-  alb_access_logs = var.alb_access_logs
+  override_alb_name = var.override_alb_name
+  deploy_env        = var.deploy_env
+  project_id        = var.project_id
+  alb_access_logs   = var.alb_access_logs
 
   # Ports and Firewall settings
   internal_port         = var.internal_port
@@ -111,7 +112,7 @@ module container_definition {
       SOMBRA_TLS_CERT           = var.tls_config.cert
     } :
     key => val
-    if length(val) > 0
+    if try(length(val) > 0, false)
   }
 
   deploy_env = var.deploy_env
