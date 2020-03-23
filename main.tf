@@ -38,7 +38,8 @@ module load_balancer {
 ############
 
 module container_definition {
-  source = "./modules/fargate_container_definition"
+  source  = "transcend-io/fargate-container/aws"
+  version = "0.0.1"
 
   name           = "${var.deploy_env}-${var.project_id}-container"
   image          = var.ecr_image
@@ -125,7 +126,8 @@ module container_definition {
 ###############
 
 module service {
-  source = "./modules/fargate_service"
+  source  = "transcend-io/fargate-service/aws"
+  version = "0.0.1"
 
   name                   = "${var.deploy_env}-${var.project_id}-sombra-service"
   desired_count          = var.desired_count
