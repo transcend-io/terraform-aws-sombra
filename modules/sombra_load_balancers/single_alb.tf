@@ -9,7 +9,7 @@ locals {
 
 module load_balancer {
   source  = "terraform-aws-modules/alb/aws"
-  version = "~> 5.0"
+  version = "5.0.0"
 
   create_lb = ! var.use_private_load_balancer
 
