@@ -49,7 +49,7 @@ module container_definition {
   log_configuration   = var.log_configuration
   log_secrets         = var.log_secrets
 
-  environment = {
+  environment = merge({
     # General Settings
     EXTERNAL_PORT_HTTPS = var.external_port
     INTERNAL_PORT_HTTPS = var.internal_port
@@ -101,7 +101,7 @@ module container_definition {
     OAUTH_PROFILE_PICTURE_PATH        = var.oauth_config.profile_picture_path
     OAUTH_EMAIL_IS_VERIFIED_PATH      = var.oauth_config.email_is_verified_path
     OAUTH_EMAIL_IS_VERIFIED           = var.oauth_config.email_is_verified
-  }
+  }, var.extra_envs)
 
   secret_environment = {
     for key, val in {

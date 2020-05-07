@@ -361,6 +361,21 @@ variable override_alb_name {
   description ="If set as a string, this custom name will be used on the alb resources"
 }
 
+variable extra_envs {
+  type = map(string)
+  description = <<EOF
+  A map of custom environment variables to set on the Sombra container.
+
+  The envs set here will overwrite any other envs on the container set in this module.
+
+  Example: {
+    SOME_ENV = "value"
+    SOME_LOGGING_LEVEL = "info"
+  }
+  EOF
+  default = {}
+}
+
 variable tags {
   type        = map(string)
   description = "Tags to apply to all resources that support them"
