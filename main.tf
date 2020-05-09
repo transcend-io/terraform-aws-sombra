@@ -103,7 +103,7 @@ module container_definition {
     OAUTH_EMAIL_IS_VERIFIED           = var.oauth_config.email_is_verified
   }, var.extra_envs)
 
-  secret_environment = {
+  secret_environment = merge({
     for key, val in {
       OAUTH_CLIENT_SECRET       = var.oauth_config.secret_id
       JWT_ECDSA_KEY             = var.jwt_ecdsa_key
@@ -113,7 +113,7 @@ module container_definition {
     } :
     key => val
     if try(length(val) > 0, false)
-  }
+  }, var.extra_secret_envs)
 
   deploy_env = var.deploy_env
   aws_region = var.aws_region

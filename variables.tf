@@ -376,6 +376,20 @@ variable extra_envs {
   default = {}
 }
 
+variable extra_secret_envs {
+  type = map(string)
+  description = <<EOF
+  A map of custom, secretive environment variables to set on the Sombra container.
+
+  The envs set here will overwrite any other envs on the container set in this module.
+
+  Example: {
+    SOME_SECRET_ENV = "some_cryptographically_signed_value"
+  }
+  EOF
+  default = {}
+}
+
 variable tags {
   type        = map(string)
   description = "Tags to apply to all resources that support them"
