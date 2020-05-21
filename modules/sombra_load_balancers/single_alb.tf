@@ -4,7 +4,7 @@
 
 locals {
   should_override_name = try(length(var.override_alb_name) > 0, false)
-  alb_name = local.should_override_name ? var.override_alb_name : "${var.project_id}-sombra-alb"
+  alb_name             = local.should_override_name ? var.override_alb_name : "${var.project_id}-sombra-alb"
 }
 
 module load_balancer {

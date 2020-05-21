@@ -97,9 +97,9 @@ variable zone_id {
 }
 
 variable override_alb_name {
-  type = string
-  default = null
-  description ="If set as a string, this custom name will be used on the alb resources"
+  type        = string
+  default     = null
+  description = "If set as a string, this custom name will be used on the alb resources"
 }
 
 variable tags {
