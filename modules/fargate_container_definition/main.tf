@@ -87,9 +87,9 @@ module "definition" {
   })
 
   environment = [
-    for name in sort(keys(var.environment)):
+    for name in sort(keys(var.environment)) :
     {
-      name = name
+      name  = name
       value = var.environment[name]
     }
   ]

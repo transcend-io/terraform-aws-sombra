@@ -14,6 +14,16 @@ output security_group_ids {
 }
 
 output private_zone_id {
-  value = var.use_private_load_balancer ? aws_route53_zone.private[0].zone_id : ""
+  value       = var.use_private_load_balancer ? aws_route53_zone.private[0].zone_id : ""
   description = "The hosted zone id of the private zone for the internal load balancer, if a private zone exists"
+}
+
+output internal_listener_arn {
+  value       = var.use_private_load_balancer ? module.internal_load_balancer.https_listener_arns[0] : module.load_balancer.https_listener_arns[0]
+  description = "ARN of the internal sombra load balancer listener"
+}
+
+output external_listener_arn {
+  value       = var.use_private_load_balancer ? module.external_load_balancer.https_listener_arns[0] : module.load_balancer.https_listener_arns[1]
+  description = "ARN of the external sombra load balancer listener"
 }

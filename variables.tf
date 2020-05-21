@@ -93,8 +93,8 @@ variable tls_config {
   })
   default = {
     passphrase = null
-    cert = null
-    key = null
+    cert       = null
+    key        = null
   }
   description = <<EOF
   Sombra TLS Support. These values are sensitive, and should be kept secret.
@@ -356,13 +356,13 @@ variable use_private_load_balancer {
 }
 
 variable override_alb_name {
-  type = string
-  default = null
-  description ="If set as a string, this custom name will be used on the alb resources"
+  type        = string
+  default     = null
+  description = "If set as a string, this custom name will be used on the alb resources"
 }
 
 variable extra_envs {
-  type = map(string)
+  type        = map(string)
   description = <<EOF
   A map of custom environment variables to set on the Sombra container.
 
@@ -373,11 +373,11 @@ variable extra_envs {
     SOME_LOGGING_LEVEL = "info"
   }
   EOF
-  default = {}
+  default     = {}
 }
 
 variable extra_secret_envs {
-  type = map(string)
+  type        = map(string)
   description = <<EOF
   A map of custom, secretive environment variables to set on the Sombra container.
 
@@ -387,7 +387,7 @@ variable extra_secret_envs {
     SOME_SECRET_ENV = "some_cryptographically_signed_value"
   }
   EOF
-  default = {}
+  default     = {}
 }
 
 variable tags {
