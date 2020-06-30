@@ -78,13 +78,6 @@ variable employee_auth_methods {
   description = "Supported customer employee authentication methods"
 }
 
-variable jwt_ecdsa_key {
-  description = <<EOF
-  The JSON Web Token asymmetric key for signing Sombra payloads, using the Elliptic
-  Curve Digital Signature Algorithm"
-  EOF
-}
-
 variable tls_config {
   type = object({
     passphrase = string
@@ -149,6 +142,14 @@ variable transcend_backend_ips {
 variable use_local_kms {
   default     = true
   description = "When true, local KMS will be used. When false, AWS will be used"
+}
+
+variable jwt_ecdsa_key {
+  default     = ""
+  description = <<EOF
+  The JSON Web Token asymmetric key for signing Sombra payloads, using the Elliptic
+  Curve Digital Signature Algorithm"
+  EOF
 }
 
 variable internal_key_hash {
