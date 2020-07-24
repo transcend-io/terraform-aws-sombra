@@ -22,3 +22,8 @@ output external_listener_arn {
   value       = module.load_balancer.external_listener_arn
   description = "ARN of the external sombra load balancer listener"
 }
+
+output "role_arn" {
+  value       = module.service.role_arn
+  description = "Arn of the task execution role"
+}
