@@ -71,11 +71,13 @@ variable deploy_env {
 variable data_subject_auth_methods {
   type        = list(string)
   description = "Supported data subject authentication methods"
+  default     = []
 }
 
 variable employee_auth_methods {
   type        = list(string)
   description = "Supported customer employee authentication methods"
+  default     = []
 }
 
 variable tls_config {
