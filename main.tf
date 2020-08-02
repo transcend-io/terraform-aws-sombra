@@ -74,7 +74,6 @@ module container_definition {
     TRANSCEND_URL               = var.transcend_backend_url
     TRANSCEND_CN                = var.transcend_certificate_common_name
     LOG_LEVEL                   = var.log_level
-    ENCRYPTED_SAAS_HTTP_METHODS = join(",", var.encrypted_saas_http_methods)
 
     # Global Settings
     ORGANIZATION_URI                    = var.organization_uri
