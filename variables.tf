@@ -177,12 +177,6 @@ variable transcend_certificate_common_name {
   description = "Transcend's certificate Common NameTranscend's certificate Common Name"
 }
 
-variable encrypted_saas_http_methods {
-  default     = ["GET"]
-  type        = list(string)
-  description = "Whitelisted HTTP methods when probing a SaaS tool for valid auth credentials"
-}
-
 variable saml_config {
   type = object({
     entrypoint             = string
