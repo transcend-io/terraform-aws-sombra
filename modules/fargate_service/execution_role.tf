@@ -14,6 +14,13 @@ resource "aws_iam_role" "execution_role" {
   assume_role_policy = data.aws_iam_policy_document.ecs_cloudwatch_doc.json
 }
 
+locals {
+  policy_arns = concat(
+    var.additional_task_policy_arns,
+    ["arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"]
+  )
+}
+
 /**
  * This resource code seems pretty gross, but 'tis the way it has to be.
  *
@@ -32,8 +39,5 @@ resource "aws_iam_role" "execution_role" {
 resource "aws_iam_role_policy_attachment" "ecs_role_policy" {
   count = var.additional_task_policy_arns_count + 1
   role  = aws_iam_role.execution_role.name
-  policy_arn = concat(
-    var.additional_task_policy_arns,
-    ["arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"]
-  )[count.index]
+  policy_arn = local.policy_arns[count.index]
 }
