@@ -23,12 +23,17 @@ output external_listener_arn {
   description = "ARN of the external sombra load balancer listener"
 }
 
+output lb_arn_suffix {
+  value       = module.load_balancer.arn_suffix
+  description = "Amazon Resource Name suffix for the load balancer. Only present in single alb configurations"
+}
+
 output "role_arn" {
   value       = module.service.role_arn
   description = "Arn of the task execution role"
 }
 
 output "policy_arns" {
-  value = module.service.policy_arns
+  value       = module.service.policy_arns
   description = "Amazon resource names of all policies set on the IAM Role execution task"
 }
