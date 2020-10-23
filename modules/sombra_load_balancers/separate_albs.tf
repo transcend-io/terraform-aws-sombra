@@ -4,7 +4,7 @@
 
 module internal_load_balancer {
   source  = "terraform-aws-modules/alb/aws"
-  version = "5.0.0"
+  version = "5.9.0"
 
   create_lb = var.use_private_load_balancer
 
@@ -49,7 +49,7 @@ module internal_load_balancer {
 
 module "internal_security_group" {
   source  = "terraform-aws-modules/security-group/aws"
-  version = "3.4.0"
+  version = "3.16.0"
 
   create = var.use_private_load_balancer
 
@@ -108,7 +108,7 @@ resource "aws_route53_record" "alb_alias" {
 
 module external_load_balancer {
   source  = "terraform-aws-modules/alb/aws"
-  version = "5.0.0"
+  version = "5.9.0"
 
   create_lb = var.use_private_load_balancer
 
@@ -149,7 +149,7 @@ module external_load_balancer {
 
 module "external_security_group" {
   source  = "terraform-aws-modules/security-group/aws"
-  version = "3.4.0"
+  version = "3.16.0"
 
   create = var.use_private_load_balancer
 
