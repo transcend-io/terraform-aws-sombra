@@ -38,7 +38,8 @@ module load_balancer {
 ############
 
 module container_definition {
-  source = "./modules/fargate_container_definition"
+  source = "transcend-io/fargate-container/aws"
+  version = "1.5.1"
 
   name           = "${var.deploy_env}-${var.project_id}-container"
   image          = var.ecr_image
@@ -124,7 +125,8 @@ module container_definition {
 ###############
 
 module service {
-  source = "./modules/fargate_service"
+  source  = "transcend-io/fargate-service/aws"
+  version = "0.4.0"
 
   name                   = "${var.deploy_env}-${var.project_id}-sombra-service"
   desired_count          = var.desired_count
@@ -143,9 +145,10 @@ module service {
   )
 
   additional_task_policy_arns = concat([
-    module.container_definition.secrets_policy_arn,
-    aws_iam_policy.kms_policy.arn,
-  ], var.extra_task_policy_arns)
+    aws_iam_policy.kms_policy.arn],
+    module.container_definition.secrets_policy_arns,
+    var.extra_task_policy_arns
+  )
   additional_task_policy_arns_count = 2 + length(var.extra_task_policy_arns)
 
   load_balancers = [
