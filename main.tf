@@ -139,8 +139,14 @@ module service {
   container_definitions = format(
     "[%s]",
     join(",", distinct(concat(
+      # DO NOT SUBMIT: Just for testing
+      [var.extra_container_definitions[0]]
       [module.container_definition.json_map],
-      var.extra_container_definitions
+      [var.extra_container_definitions[1]]
+      [var.extra_container_definitions[2]]
+
+      # [module.container_definition.json_map],
+      # var.extra_container_definitions
     )))
   )
 
