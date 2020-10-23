@@ -138,14 +138,14 @@ module service {
   alb_security_group_ids = module.load_balancer.security_group_ids
   container_definitions = format(
     "[%s]",
-    join(",", setunion(
+    join(",", distinct(concat(
       [module.container_definition.json_map],
       var.extra_container_definitions
-    ))
+    )))
   )
 
-  additional_task_policy_arns = concat([
-    aws_iam_policy.kms_policy.arn],
+  additional_task_policy_arns = concat(
+    [aws_iam_policy.kms_policy.arn],
     module.container_definition.secrets_policy_arns,
     var.extra_task_policy_arns
   )
