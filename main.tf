@@ -139,10 +139,10 @@ module service {
   container_definitions = format(
     "[%s]",
     join(",", [
-      var.extra_container_definitions[0]
+      var.extra_container_definitions[0],
       module.container_definition.json_map,
-      var.extra_container_definitions[1]
-      var.extra_container_definitions[2]
+      var.extra_container_definitions[1],
+      var.extra_container_definitions[2],
     ])
     # join(",", distinct(concat(
     #   [module.container_definition.json_map],
