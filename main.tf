@@ -145,8 +145,8 @@ module service {
   )
 
   additional_task_policy_arns = concat(
-    [aws_iam_policy.kms_policy.arn],
     module.container_definition.secrets_policy_arns,
+    [aws_iam_policy.kms_policy.arn],
     var.extra_task_policy_arns
   )
   additional_task_policy_arns_count = 2 + length(var.extra_task_policy_arns)
