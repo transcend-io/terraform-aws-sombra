@@ -281,6 +281,10 @@ variable log_configuration {
     logDriver = string
     options   = map(string)
   })
+  default     = {
+    logDriver = "awslogs"
+    options = {}
+  }
   description = <<EOF
   Log configuration options to send to a custom log driver for the container.
   For more details, see https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_LogConfiguration.html
@@ -290,7 +294,6 @@ variable log_configuration {
 
   Use log_secrets to set extra options here that should be secret, such as API keys for third party loggers.
   EOF
-  default     = null
 }
 
 variable log_secrets {
