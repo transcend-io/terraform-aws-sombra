@@ -67,10 +67,6 @@ module container_definition {
     # Override internal key
     INTERNAL_KEY_HASH = var.internal_key_hash
 
-    # Cycle
-    HMAC_NONCE_KEY_CYCLE      = var.hmac_nonce_key_cycle
-    KEY_ENCRYPTION_BASE_CYCLE = var.key_encryption_base_cycle
-
     NODE_ENV      = "production"
     TRANSCEND_URL = var.transcend_backend_url
     TRANSCEND_CN  = var.transcend_certificate_common_name

@@ -157,16 +157,6 @@ variable internal_key_hash {
   description = "This will override the generated internal key"
 }
 
-variable hmac_nonce_key_cycle {
-  default     = ""
-  description = "Cycled HMAC nonce key (384 bits), held around during a key cycle process for requests made before the cycle"
-}
-
-variable key_encryption_base_cycle {
-  default     = ""
-  description = "Cycled High entropy secret value for local KMS (256 bits)"
-}
-
 variable transcend_backend_url {
   default     = "https://api.transcend.io:443"
   description = "URL of Transcend's backend"
