@@ -58,3 +58,7 @@ After that, you can reference the `internal_url` output from your backend over H
   <br />
   <i>Copyright © 2020 Transcend Inc.</i>
 </p>
+
+## Releases
+
+To release a new version of the module to the Terraform Module registry, simply create a new Github release [here](https://github.com/transcend-io/terraform-aws-sombra/releases/new). CI will automatically pick up this release & publish to registry.terraform.io
