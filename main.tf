@@ -39,7 +39,7 @@ module load_balancer {
 
 module container_definition {
   source = "transcend-io/fargate-container/aws"
-  version = "1.7.0"
+  version = "1.7.1"
 
   name           = "${var.deploy_env}-${var.project_id}-container"
   image          = var.ecr_image
