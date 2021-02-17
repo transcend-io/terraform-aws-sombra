@@ -135,7 +135,7 @@ variable incoming_cidr_ranges {
 
 variable transcend_backend_ips {
   type        = list(string)
-  default     = ["52.215.231.215/32", "63.34.48.255/32", "34.249.254.13/32"]
+  default     = ["52.215.231.215/32", "63.34.48.255/32", "34.249.254.13/32", "54.75.178.77/32"]
   description = "The IP addresses of Transcend"
 }
 
