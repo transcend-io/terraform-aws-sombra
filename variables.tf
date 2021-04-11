@@ -2,51 +2,51 @@
 # Required Variables #
 ######################
 
-variable project_id {
+variable "project_id" {
   description = "A name to use in resources, such as the name of your company."
 }
 
-variable organization_uri {
+variable "organization_uri" {
   description = "The unique URI for you organization from Transcend."
 }
 
-variable vpc_id {
+variable "vpc_id" {
   description = "The ID of the VPC to put this application into"
 }
 
-variable ecr_image {
+variable "ecr_image" {
   description = "Url of the ECR repo, including the tag"
   default     = "829095311197.dkr.ecr.eu-west-1.amazonaws.com/sombra:prod"
 }
 
-variable desired_count {
+variable "desired_count" {
   description = "The number of ECS tasks that the service should keep alive"
 }
 
-variable public_subnet_ids {
+variable "public_subnet_ids" {
   type        = list(string)
   description = "The subnets the ALB can be placed into"
 }
 
-variable private_subnet_ids {
+variable "private_subnet_ids" {
   type        = list(string)
   description = "The subnets the ECS tasks can be placed into, as well as the internal load balancer if desired"
 }
 
-variable private_subnets_cidr_blocks {
+variable "private_subnets_cidr_blocks" {
   type        = list(string)
   description = "CIDR blocks that an ECS task could be in"
 }
 
-variable zone_id {
+variable "zone_id" {
   description = "The ID of the Route53 hosted zone where the public sombra subdomain will be created"
 }
 
-variable certificate_arn {
+variable "certificate_arn" {
   description = "Arn of the ACM cert that exists on the ALB"
 }
 
-variable subdomain {
+variable "subdomain" {
   description = <<EOF
   The subdomain to create the sombra services at.
 
@@ -55,7 +55,7 @@ variable subdomain {
   EOF
 }
 
-variable root_domain {
+variable "root_domain" {
   description = <<EOF
   The root domain to create the sombra services at.
 
@@ -64,21 +64,21 @@ variable root_domain {
   EOF
 }
 
-variable deploy_env {
+variable "deploy_env" {
   description = "The environment to deploy to, usually dev, staging, or prod"
 }
 
-variable data_subject_auth_methods {
+variable "data_subject_auth_methods" {
   type        = list(string)
   description = "Supported data subject authentication methods"
 }
 
-variable employee_auth_methods {
+variable "employee_auth_methods" {
   type        = list(string)
   description = "Supported customer employee authentication methods"
 }
 
-variable tls_config {
+variable "tls_config" {
   type = object({
     passphrase = string
     cert       = string
@@ -110,7 +110,7 @@ variable tls_config {
 # Optional Variables #
 ######################
 
-variable cluster_id {
+variable "cluster_id" {
   description = "ID of the ECS cluster this service should run in"
   default     = ""
 }
@@ -121,7 +121,7 @@ variable "alb_access_logs" {
   default     = {}
 }
 
-variable incoming_cidr_ranges {
+variable "incoming_cidr_ranges" {
   type        = list(string)
   description = <<EOF
   If you want to restrict the IP addresses that can talk to the
@@ -133,18 +133,18 @@ variable incoming_cidr_ranges {
   default     = ["0.0.0.0/0"]
 }
 
-variable transcend_backend_ips {
+variable "transcend_backend_ips" {
   type        = list(string)
   default     = ["52.215.231.215/32", "63.34.48.255/32", "34.249.254.13/32", "54.75.178.77/32"]
   description = "The IP addresses of Transcend"
 }
 
-variable use_local_kms {
+variable "use_local_kms" {
   default     = true
   description = "When true, local KMS will be used. When false, AWS will be used"
 }
 
-variable jwt_ecdsa_key {
+variable "jwt_ecdsa_key" {
   default     = ""
   description = <<EOF
   The JSON Web Token asymmetric key for signing Sombra payloads, using the Elliptic
@@ -152,22 +152,22 @@ variable jwt_ecdsa_key {
   EOF
 }
 
-variable internal_key_hash {
+variable "internal_key_hash" {
   default     = ""
   description = "This will override the generated internal key"
 }
 
-variable transcend_backend_url {
+variable "transcend_backend_url" {
   default     = "https://api.transcend.io:443"
   description = "URL of Transcend's backend"
 }
 
-variable transcend_certificate_common_name {
+variable "transcend_certificate_common_name" {
   default     = "*.transcend.io"
   description = "Transcend's certificate Common NameTranscend's certificate Common Name"
 }
 
-variable saml_config {
+variable "saml_config" {
   type = object({
     entrypoint             = string
     issuer                 = string
@@ -196,7 +196,7 @@ variable saml_config {
   EOF
 }
 
-variable oauth_config {
+variable "oauth_config" {
   type = object({
     scopes                      = list(string)
     client_id                   = string
@@ -234,46 +234,46 @@ variable oauth_config {
   EOF
 }
 
-variable jwt_authentication_public_key {
+variable "jwt_authentication_public_key" {
   default     = ""
   description = "Customer's data subject authentication via JWT public key"
 }
 
-variable aws_region {
+variable "aws_region" {
   description = "The AWS region to deploy resources to"
   default     = "eu-west-1"
 }
 
-variable internal_port {
+variable "internal_port" {
   description = "The port the internal sombra should run on. This is the server that your internal services will have access to."
   default     = 443
 }
 
-variable external_port {
+variable "external_port" {
   description = "The port the external sombra should run on, this is the server that only Transcend's API talks to."
   default     = 5041
 }
 
-variable log_level {
+variable "log_level" {
   description = "The level at which logs should go to console: see https://github.com/pinojs/pino"
   default     = "warn"
 }
 
-variable use_cloudwatch_logs {
+variable "use_cloudwatch_logs" {
   type        = bool
   description = "If true, a cloudwatch group will be created and written to."
   default     = true
 }
 
 # https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_LogConfiguration.html
-variable log_configuration {
+variable "log_configuration" {
   type = object({
     logDriver = string
     options   = map(string)
   })
-  default     = {
+  default = {
     logDriver = "awslogs"
-    options = {}
+    options   = {}
   }
   description = <<EOF
   Log configuration options to send to a custom log driver for the container.
@@ -286,13 +286,13 @@ variable log_configuration {
   EOF
 }
 
-variable log_secrets {
+variable "log_secrets" {
   type        = map(string)
   default     = {}
   description = "Used to add extra options to log_configuration.options that should be secret, such as third party API keys"
 }
 
-variable extra_container_definitions {
+variable "extra_container_definitions" {
   type        = list(string)
   description = <<EOF
   Extra ECS container definitions to add to the task.
@@ -305,17 +305,27 @@ variable extra_container_definitions {
   default     = []
 }
 
-variable cpu {
+variable "sombra_container_cpu" {
   default     = 512
-  description = "How much CPU should be allocated to the task?"
+  description = "How much CPU should be allocated to the sombra container?"
 }
 
-variable memory {
+variable "sombra_container_memory" {
   default     = 1024
-  description = "How much memory should be allocated to the task?"
+  description = "How much memory should be allocated to the sombra container?"
 }
 
-variable extra_task_policy_arns {
+variable "cpu" {
+  default     = 2048
+  description = "How much CPU should be allocated to the entire ECS Service?"
+}
+
+variable "memory" {
+  default     = 4096
+  description = "How much memory should be allocated to the entire ECS Service?"
+}
+
+variable "extra_task_policy_arns" {
   type        = list(string)
   description = <<EOF
   ARNs of any additional IAM Policies you want to attach to the ECS Task.
@@ -331,7 +341,7 @@ variable extra_task_policy_arns {
   default     = []
 }
 
-variable use_private_load_balancer {
+variable "use_private_load_balancer" {
   type        = bool
   default     = false
   description = <<EOF
@@ -343,13 +353,13 @@ variable use_private_load_balancer {
   EOF
 }
 
-variable override_alb_name {
+variable "override_alb_name" {
   type        = string
   default     = null
   description = "If set as a string, this custom name will be used on the alb resources"
 }
 
-variable extra_envs {
+variable "extra_envs" {
   type        = map(string)
   description = <<EOF
   A map of custom environment variables to set on the Sombra container.
@@ -364,7 +374,7 @@ variable extra_envs {
   default     = {}
 }
 
-variable extra_secret_envs {
+variable "extra_secret_envs" {
   type        = map(string)
   description = <<EOF
   A map of custom, secretive environment variables to set on the Sombra container.
@@ -378,7 +388,7 @@ variable extra_secret_envs {
   default     = {}
 }
 
-variable tags {
+variable "tags" {
   type        = map(string)
   description = "Tags to apply to all resources that support them"
   default     = {}
