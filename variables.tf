@@ -317,12 +317,12 @@ variable "sombra_container_memory" {
 
 variable "cpu" {
   default     = 2048
-  description = "How much CPU should be allocated to the entire ECS Service?"
+  description = "How much CPU should be allocated to the entire ECS Task?"
 }
 
 variable "memory" {
   default     = 4096
-  description = "How much memory should be allocated to the entire ECS Service?"
+  description = "How much memory should be allocated to the entire ECS Task?"
 }
 
 variable "extra_task_policy_arns" {
