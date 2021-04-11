@@ -311,7 +311,7 @@ variable "sombra_container_cpu" {
 }
 
 variable "sombra_container_memory" {
-  default     = 1024
+  default     = 2048
   description = "How much memory should be allocated to the sombra container?"
 }
 
