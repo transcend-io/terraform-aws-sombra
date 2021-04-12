@@ -2,7 +2,7 @@
 # Load Balancer #
 #################
 
-module load_balancer {
+module "load_balancer" {
   source = "./modules/sombra_load_balancers"
 
   # General Settings
@@ -37,8 +37,8 @@ module load_balancer {
 # ECS Task #
 ############
 
-module container_definition {
-  source = "transcend-io/fargate-container/aws"
+module "container_definition" {
+  source  = "transcend-io/fargate-container/aws"
   version = "1.7.1"
 
   name           = "${var.deploy_env}-${var.project_id}-container"
@@ -49,6 +49,10 @@ module container_definition {
   use_cloudwatch_logs = var.use_cloudwatch_logs
   log_configuration   = var.log_configuration
   log_secrets         = var.log_secrets
+
+  cpu               = var.sombra_container_cpu
+  memory            = var.sombra_container_memory
+  memoryReservation = var.sombra_container_memory
 
   environment = merge({
     # General Settings
@@ -120,7 +124,7 @@ module container_definition {
 # ECS Service #
 ###############
 
-module service {
+module "service" {
   source  = "transcend-io/fargate-service/aws"
   version = "0.4.0"
 
