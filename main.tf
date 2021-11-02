@@ -10,6 +10,7 @@ module "load_balancer" {
   deploy_env        = var.deploy_env
   project_id        = var.project_id
   alb_access_logs   = var.alb_access_logs
+  idle_timeout      = var.idle_timeout
 
   # Ports and Firewall settings
   internal_port         = var.internal_port

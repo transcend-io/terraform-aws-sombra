@@ -7,16 +7,17 @@ locals {
   alb_name             = local.should_override_name ? var.override_alb_name : "${var.project_id}-sombra-alb"
 }
 
-module load_balancer {
+module "load_balancer" {
   source  = "terraform-aws-modules/alb/aws"
   version = "5.10.0"
 
-  create_lb = ! var.use_private_load_balancer
+  create_lb = !var.use_private_load_balancer
 
   # General Settings
   name                       = local.alb_name
   enable_deletion_protection = false
   access_logs                = var.alb_access_logs
+  idle_timeout               = var.idle_timeout
 
   # VPC Settings
   subnets         = var.public_subnet_ids
@@ -80,7 +81,7 @@ module "single_security_group" {
   source  = "terraform-aws-modules/security-group/aws"
   version = "3.17.0"
 
-  create = ! var.use_private_load_balancer
+  create = !var.use_private_load_balancer
 
   name        = "${var.project_id}-sombra-alb"
   description = "Security group for sombra alb"
