@@ -359,6 +359,12 @@ variable "override_alb_name" {
   description = "If set as a string, this custom name will be used on the alb resources"
 }
 
+variable "idle_timeout" {
+  type = number
+  default = 60
+  description = "The time in seconds that the connection is allowed to be idle"
+}
+
 variable "extra_envs" {
   type        = map(string)
   description = <<EOF
