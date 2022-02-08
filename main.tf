@@ -127,10 +127,9 @@ module "container_definition" {
 
 module "service" {
   source  = "transcend-io/fargate-service/aws"
-  version = "0.4.0"
+  version = "0.6.0"
 
   name                   = "${var.deploy_env}-${var.project_id}-sombra-service"
-  desired_count          = var.desired_count
   cpu                    = var.cpu
   memory                 = var.memory
   cluster_id             = local.cluster_id
@@ -166,6 +165,14 @@ module "service" {
       container_port   = var.external_port
     }
   ]
+
+  # Scaling configuration.
+  desired_count        = var.desired_count
+  use_autoscaling      = var.use_autoscaling
+  min_desired_count    = var.min_desired_count
+  max_desired_count    = var.max_desired_count
+  scaling_target_value = var.scaling_target_value
+  scaling_metric       = var.scaling_metric
 
   deploy_env = var.deploy_env
   aws_region = var.aws_region
