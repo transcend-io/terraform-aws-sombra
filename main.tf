@@ -126,8 +126,10 @@ module "container_definition" {
 ###############
 
 module "service" {
-  source  = "transcend-io/fargate-service/aws"
-  version = "0.6.0"
+  # FIXME
+#  source  = "transcend-io/fargate-service/aws"
+#  version = "0.6.0"
+  source = "git::https://transcend-io/fargate-aws-fargate-service.git?ref=dipack/fix-ignore-changes"
 
   name                   = "${var.deploy_env}-${var.project_id}-sombra-service"
   cpu                    = var.cpu
