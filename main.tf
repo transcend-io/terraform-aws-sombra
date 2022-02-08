@@ -40,7 +40,7 @@ module "load_balancer" {
 
 module "container_definition" {
   source  = "transcend-io/fargate-container/aws"
-  version = "1.7.1"
+  version = "1.9.2"
 
   name           = "${var.deploy_env}-${var.project_id}-container"
   image          = var.ecr_image
@@ -127,13 +127,14 @@ module "container_definition" {
 
 module "service" {
   source  = "transcend-io/fargate-service/aws"
-  version = "0.4.0"
+  version = "0.6.1"
 
-  name                   = "${var.deploy_env}-${var.project_id}-sombra-service"
-  desired_count          = var.desired_count
-  cpu                    = var.cpu
-  memory                 = var.memory
-  cluster_id             = local.cluster_id
+  name         = "${var.deploy_env}-${var.project_id}-sombra-service"
+  cpu          = var.cpu
+  memory       = var.memory
+  cluster_id   = local.cluster_id
+  cluster_name = local.cluster_name
+
   vpc_id                 = var.vpc_id
   subnet_ids             = var.private_subnet_ids
   alb_security_group_ids = module.load_balancer.security_group_ids
@@ -167,6 +168,14 @@ module "service" {
     }
   ]
 
+  # Scaling configuration.
+  desired_count        = var.desired_count
+  use_autoscaling      = var.use_autoscaling
+  min_desired_count    = var.min_desired_count
+  max_desired_count    = var.max_desired_count
+  scaling_target_value = var.scaling_target_value
+  scaling_metric       = var.scaling_metric
+
   deploy_env = var.deploy_env
   aws_region = var.aws_region
   tags       = var.tags
@@ -183,7 +192,8 @@ resource "aws_ecs_cluster" "cluster" {
 }
 
 locals {
-  cluster_id = var.cluster_id == "" ? aws_ecs_cluster.cluster[0].id : var.cluster_id
+  cluster_id   = var.cluster_id == "" ? aws_ecs_cluster.cluster[0].id : var.cluster_id
+  cluster_name = var.cluster_name == "" ? aws_ecs_cluster.cluster[0].name : var.cluster_name
 }
 
 ##############

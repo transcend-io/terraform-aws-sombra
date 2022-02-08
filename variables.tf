@@ -19,10 +19,6 @@ variable "ecr_image" {
   default     = "829095311197.dkr.ecr.eu-west-1.amazonaws.com/sombra:prod"
 }
 
-variable "desired_count" {
-  description = "The number of ECS tasks that the service should keep alive"
-}
-
 variable "public_subnet_ids" {
   type        = list(string)
   description = "The subnets the ALB can be placed into"
@@ -112,6 +108,12 @@ variable "tls_config" {
 
 variable "cluster_id" {
   description = "ID of the ECS cluster this service should run in"
+  default     = ""
+}
+
+variable "cluster_name" {
+  type        = string
+  description = "The name of the ECS cluster this service should run in"
   default     = ""
 }
 
@@ -360,8 +362,8 @@ variable "override_alb_name" {
 }
 
 variable "idle_timeout" {
-  type = number
-  default = 60
+  type        = number
+  default     = 60
   description = "The time in seconds that the connection is allowed to be idle"
 }
 
@@ -400,3 +402,43 @@ variable "tags" {
   default     = {}
 }
 
+
+#####################
+# Scaling Variables #
+#####################
+
+variable "desired_count" {
+  type        = number
+  description = "If not using Application Auto-scaling, the number of tasks to keep alive at all times"
+  default     = null
+}
+
+variable "use_autoscaling" {
+  type        = bool
+  description = "Use Application Auto-scaling to scale service"
+  default     = false
+}
+
+variable "min_desired_count" {
+  type        = number
+  description = "If using Application auto-scaling, minimum number of tasks to keep alive at all times"
+  default     = null
+}
+
+variable "max_desired_count" {
+  type        = number
+  description = "If using Application auto-scaling, maximum number of tasks to keep alive at all times"
+  default     = null
+}
+
+variable "scaling_target_value" {
+  type        = number
+  description = "If using Application auto-scaling, the target value to hit for the Auto-scaling policy"
+  default     = null
+}
+
+variable "scaling_metric" {
+  type        = string
+  description = "If using Application auto-scaling, the pre-defined AWS metric to use for the Auto-scaling policy"
+  default     = "ALBRequestCountPerTarget"
+}
