@@ -135,6 +135,8 @@ module "service" {
   cpu                    = var.cpu
   memory                 = var.memory
   cluster_id             = local.cluster_id
+  cluster_name = local.cluster_name
+
   vpc_id                 = var.vpc_id
   subnet_ids             = var.private_subnet_ids
   alb_security_group_ids = module.load_balancer.security_group_ids
@@ -193,6 +195,7 @@ resource "aws_ecs_cluster" "cluster" {
 
 locals {
   cluster_id = var.cluster_id == "" ? aws_ecs_cluster.cluster[0].id : var.cluster_id
+  cluster_name = var.cluster_name == "" ?  aws_ecs_cluster.cluster[0].name : var.cluster_name
 }
 
 ##############

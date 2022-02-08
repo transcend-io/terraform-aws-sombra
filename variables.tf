@@ -111,6 +111,12 @@ variable "cluster_id" {
   default     = ""
 }
 
+variable "cluster_name" {
+  type = string
+  description = "The name of the ECS cluster this service should run in"
+  default = ""
+}
+
 variable "alb_access_logs" {
   description = "Map containing access logging configuration for the load balancer."
   type        = map(string)
