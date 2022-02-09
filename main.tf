@@ -131,10 +131,8 @@ locals {
 }
 
 module "service" {
-  #  source  = "transcend-io/fargate-service/aws"
-  #  version = "0.6.1"
-  # FIXME
-  source = "git::https://github.com/transcend-io/terraform-aws-fargate-service.git?ref=dipack/add-resource-id-scaling-target"
+  source  = "transcend-io/fargate-service/aws"
+  version = "0.6.2"
 
   name         = "${var.deploy_env}-${var.project_id}-sombra-service"
   cpu          = var.cpu
