@@ -126,8 +126,10 @@ module "container_definition" {
 ###############
 
 module "service" {
-  source  = "transcend-io/fargate-service/aws"
-  version = "0.6.1"
+  #  source  = "transcend-io/fargate-service/aws"
+  #  version = "0.6.1"
+  # FIXME
+  source = "git@https://github.com/transcend-io/terraform-aws-fargate-service.git?ref=dipack/add-resource-id-scaling-target"
 
   name         = "${var.deploy_env}-${var.project_id}-sombra-service"
   cpu          = var.cpu
@@ -169,12 +171,13 @@ module "service" {
   ]
 
   # Scaling configuration.
-  desired_count        = var.desired_count
-  use_autoscaling      = var.use_autoscaling
-  min_desired_count    = var.min_desired_count
-  max_desired_count    = var.max_desired_count
-  scaling_target_value = var.scaling_target_value
-  scaling_metric       = var.scaling_metric
+  desired_count                  = var.desired_count
+  use_autoscaling                = var.use_autoscaling
+  min_desired_count              = var.min_desired_count
+  max_desired_count              = var.max_desired_count
+  scaling_target_value           = var.scaling_target_value
+  scaling_metric                 = var.scaling_metric
+  alb_scaling_target_resource_id = var.scaling_metric == "ALBRequestCountPerTarget" ? var.alb_scaling_target_resource_id : null
 
   deploy_env = var.deploy_env
   aws_region = var.aws_region
