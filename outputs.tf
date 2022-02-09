@@ -23,6 +23,16 @@ output "external_listener_arn" {
   description = "ARN of the external sombra load balancer listener"
 }
 
+output "internal_target_group_arn" {
+  value       = module.load_balancer.internal_target_group_arn
+  description = "ARN of the internal sombra load balancer target group"
+}
+
+output "external_target_group_arn" {
+  value       = module.load_balancer.external_target_group_arn
+  description = "ARN of the external sombra load balancer target group"
+}
+
 output "lb_arn_suffix" {
   value       = module.load_balancer.arn_suffix
   description = "Amazon Resource Name suffix for the load balancer. Only present in single alb configurations"

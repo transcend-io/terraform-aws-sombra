@@ -125,9 +125,14 @@ module "container_definition" {
 # ECS Service #
 ###############
 
+locals {
+  split_external_target_arn = split(":", module.load_balancer.external_target_group_arn)
+  potential_resource_id     = "${module.load_balancer.arn_suffix}/${element(local.split_external_target_arn, length(local.split_external_target_arn) - 1)}"
+}
+
 module "service" {
   source  = "transcend-io/fargate-service/aws"
-  version = "0.6.1"
+  version = "0.6.2"
 
   name         = "${var.deploy_env}-${var.project_id}-sombra-service"
   cpu          = var.cpu
@@ -169,12 +174,13 @@ module "service" {
   ]
 
   # Scaling configuration.
-  desired_count        = var.desired_count
-  use_autoscaling      = var.use_autoscaling
-  min_desired_count    = var.min_desired_count
-  max_desired_count    = var.max_desired_count
-  scaling_target_value = var.scaling_target_value
-  scaling_metric       = var.scaling_metric
+  desired_count                  = var.desired_count
+  use_autoscaling                = var.use_autoscaling
+  min_desired_count              = var.min_desired_count
+  max_desired_count              = var.max_desired_count
+  scaling_target_value           = var.scaling_target_value
+  scaling_metric                 = var.scaling_metric
+  alb_scaling_target_resource_id = var.scaling_metric == "ALBRequestCountPerTarget" ? local.potential_resource_id : null
 
   deploy_env = var.deploy_env
   aws_region = var.aws_region
