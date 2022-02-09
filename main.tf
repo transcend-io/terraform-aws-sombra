@@ -125,6 +125,12 @@ module "container_definition" {
 # ECS Service #
 ###############
 
+locals {
+  split_alb_arn             = split(":", module.load_balancer.external_target_group_arn)
+  split_external_target_arn = split(":", module.load_balancer.external_target_group_arn)
+  potential_resource_id     = "${element(local.split_alb_arn, length(local.split_alb_arn) - 1)}/${element(local.split_external_target_arn, length(local.split_external_target_arn) - 1)}"
+}
+
 module "service" {
   #  source  = "transcend-io/fargate-service/aws"
   #  version = "0.6.1"
@@ -177,7 +183,7 @@ module "service" {
   max_desired_count              = var.max_desired_count
   scaling_target_value           = var.scaling_target_value
   scaling_metric                 = var.scaling_metric
-  alb_scaling_target_resource_id = var.scaling_metric == "ALBRequestCountPerTarget" ? var.alb_scaling_target_resource_id : null
+  alb_scaling_target_resource_id = var.scaling_metric == "ALBRequestCountPerTarget" ? local.potential_resource_id : null
 
   deploy_env = var.deploy_env
   aws_region = var.aws_region

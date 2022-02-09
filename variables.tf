@@ -442,9 +442,3 @@ variable "scaling_metric" {
   description = "If using Application auto-scaling, the pre-defined AWS metric to use for the Auto-scaling policy"
   default     = "ALBRequestCountPerTarget"
 }
-
-variable "alb_scaling_target_resource_id" {
-  type        = string
-  description = "If using Application auto-scaling, and ALBRequestCountPerTarget as the scaling metric, use this resource ID as the measure"
-  default     = ""
-}
