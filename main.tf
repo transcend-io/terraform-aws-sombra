@@ -126,9 +126,9 @@ module "container_definition" {
 ###############
 
 locals {
-  split_alb_arn             = split(":", module.load_balancer.external_target_group_arn)
+  split_alb_arn             = split(":", module.load_balancer.arn_suffix)
   split_external_target_arn = split(":", module.load_balancer.external_target_group_arn)
-  potential_resource_id     = "${element(local.split_alb_arn, length(local.split_alb_arn) - 1)}/${element(local.split_external_target_arn, length(local.split_external_target_arn) - 1)}"
+  potential_resource_id     = "${module.load_balancer.arn_suffix}/${element(local.split_external_target_arn, length(local.split_external_target_arn) - 1)}"
 }
 
 module "service" {
