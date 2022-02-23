@@ -203,14 +203,14 @@ variable "oauth_config" {
     scopes                      = list(string)
     client_id                   = string
     secret_id                   = string
+    get_token_body_redirect_uri = string
     get_token_url               = string
     get_core_id_url             = string
     get_core_id_path            = string
-    get_profile_url             = string
-    get_token_body_redirect_uri = string
-    get_profile_path            = string
+    get_profile_picture_url     = string
+    get_profile_picture_path    = string
+    get_email_url               = string
     get_email_path              = string
-    profile_picture_path        = string
     email_is_verified_path      = string
     email_is_verified           = bool
   })
@@ -218,14 +218,14 @@ variable "oauth_config" {
     scopes                      = []
     client_id                   = ""
     secret_id                   = ""
+    get_token_body_redirect_uri = ""
     get_token_url               = ""
     get_core_id_url             = ""
     get_core_id_path            = ""
-    get_profile_url             = ""
-    get_token_body_redirect_uri = ""
-    get_profile_path            = ""
+    get_profile_picture_url     = ""
+    get_profile_picture_path    = ""
+    get_email_url               = ""
     get_email_path              = ""
-    profile_picture_path        = ""
     email_is_verified_path      = ""
     email_is_verified           = false
   }

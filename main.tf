@@ -93,13 +93,13 @@ module "container_definition" {
     OAUTH_SCOPES                      = join(",", var.oauth_config.scopes)
     OAUTH_CLIENT_ID                   = var.oauth_config.client_id
     OAUTH_GET_TOKEN_URL               = var.oauth_config.get_token_url
+    OAUTH_GET_TOKEN_BODY_REDIRECT_URI = var.oauth_config.get_token_body_redirect_uri
     OAUTH_GET_CORE_ID_URL             = var.oauth_config.get_core_id_url
     OAUTH_GET_CORE_ID_PATH            = var.oauth_config.get_core_id_path
-    OAUTH_GET_PROFILE_URL             = var.oauth_config.get_profile_url
-    OAUTH_GET_TOKEN_BODY_REDIRECT_URI = var.oauth_config.get_token_body_redirect_uri
-    OAUTH_GET_PROFILE_PATH            = var.oauth_config.get_profile_path
+    OAUTH_GET_PROFILE_PICTURE_URL     = var.oauth_config.get_profile_picture_url
+    OAUTH_GET_PROFILE_PICUTRE_PATH    = var.oauth_config.get_profile_picture_path
+    OAUTH_GET_EMAIL_URL               = var.oauth_config.get_email_url
     OAUTH_GET_EMAIL_PATH              = var.oauth_config.get_email_path
-    OAUTH_PROFILE_PICTURE_PATH        = var.oauth_config.profile_picture_path
     OAUTH_EMAIL_IS_VERIFIED_PATH      = var.oauth_config.email_is_verified_path
     OAUTH_EMAIL_IS_VERIFIED           = var.oauth_config.email_is_verified
   }, var.extra_envs)
