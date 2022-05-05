@@ -12,6 +12,9 @@ module "load_balancer" {
   alb_access_logs   = var.alb_access_logs
   idle_timeout      = var.idle_timeout
 
+  # Health check settings
+  health_check_protocol = var.health_check_protocol
+
   # Ports and Firewall settings
   internal_port         = var.internal_port
   external_port         = var.external_port

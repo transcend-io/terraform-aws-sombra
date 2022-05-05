@@ -108,6 +108,12 @@ variable "idle_timeout" {
   description = "The time in seconds that the connection is allowed to be idle"
 }
 
+variable "health_check_protocol" {
+  type        = string
+  description = "HTTP/HTTPS protocol to use on the health check"
+  default     = "HTTPS"
+}
+
 variable tags {
   type        = map(string)
   description = "Tags to apply to all resources that support them"
