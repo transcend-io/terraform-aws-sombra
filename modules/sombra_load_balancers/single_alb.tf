@@ -55,7 +55,7 @@ module "load_balancer" {
         interval = 30
         port     = var.internal_port
         path     = "/health"
-        protocol = "HTTPS"
+        protocol = var.health_check_protocol
       }
     },
     # External group
@@ -69,7 +69,7 @@ module "load_balancer" {
         interval = 30
         port     = var.external_port
         path     = "/health"
-        protocol = "HTTPS"
+        protocol = var.health_check_protocol
       }
     },
   ]

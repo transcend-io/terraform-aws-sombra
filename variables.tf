@@ -442,3 +442,9 @@ variable "scaling_metric" {
   description = "If using Application auto-scaling, the pre-defined AWS metric to use for the Auto-scaling policy"
   default     = "ALBRequestCountPerTarget"
 }
+
+variable "health_check_protocol" {
+  type        = string
+  description = "HTTP/HTTPS protocol to use on the health check"
+  default     = "HTTPS"
+}
