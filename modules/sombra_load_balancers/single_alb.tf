@@ -47,7 +47,7 @@ module "load_balancer" {
     # Internal group
     {
       name             = "${var.deploy_env}-${var.project_id}-internal"
-      backend_protocol = "HTTPS"
+      backend_protocol = var.health_check_protocol
       target_type      = "ip"
       backend_port     = var.internal_port
       health_check = {
@@ -61,7 +61,7 @@ module "load_balancer" {
     # External group
     {
       name             = "${var.deploy_env}-${var.project_id}-external"
-      backend_protocol = "HTTPS"
+      backend_protocol = var.health_check_protocol
       target_type      = "ip"
       backend_port     = var.external_port
       health_check = {
