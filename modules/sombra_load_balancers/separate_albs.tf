@@ -32,7 +32,7 @@ module internal_load_balancer {
   # Target groups
   target_groups = [{
     name             = "${var.deploy_env}-${var.project_id}-internal"
-    backend_protocol = "HTTPS"
+    backend_protocol = var.health_check_protocol
     target_type      = "ip"
     backend_port     = var.internal_port
     health_check = {
@@ -40,7 +40,7 @@ module internal_load_balancer {
       interval = 30
       port     = var.internal_port
       path     = "/health"
-      protocol = "HTTPS"
+      protocol = var.health_check_protocol
     }
   }]
 
