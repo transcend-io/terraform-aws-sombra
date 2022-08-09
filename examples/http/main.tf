@@ -1,3 +1,20 @@
+# To use the sombra module, you must declare the AWS and Vault providers explicitly
+# Your settings will very likely be different here. 
+provider "aws" {
+  profile = "dev"
+  region = "eu-west-1"
+}
+provider "vault" {
+  # You are more than welcome to use real vault credentials here.
+  # See https://github.com/hashicorp/terraform-provider-vault/issues/666
+  # for an explanation of why a "fake" set of settings is required when using
+  # modules that optionally use the vault provider
+  address = "https://vault.${local.parent_domain}"
+  token   = "not-a-real-token"
+  skip_tls_verify = true
+  skip_child_token = true
+}
+
 locals {
   subdomain = "http-test"
   # You should pick a hosted zone that is in your AWS Account
