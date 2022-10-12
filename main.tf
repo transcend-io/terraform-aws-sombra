@@ -160,7 +160,7 @@ module "service" {
     var.extra_task_policy_arns,
     [aws_iam_policy.aws_policy.arn],
   )
-  additional_task_policy_arns_count = 2 + length(var.extra_task_policy_arns)
+  additional_task_policy_arns_count = 3 + length(var.extra_task_policy_arns)
 
   load_balancers = [
     # Internal target group manager
