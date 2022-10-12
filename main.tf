@@ -158,6 +158,7 @@ module "service" {
     module.container_definition.secrets_policy_arns,
     [aws_iam_policy.kms_policy.arn],
     var.extra_task_policy_arns
+    [aws_iam_policy.aws_policy.arn],
   )
   additional_task_policy_arns_count = 2 + length(var.extra_task_policy_arns)
 
@@ -229,4 +230,23 @@ resource "aws_iam_policy" "kms_policy" {
   name        = "${var.deploy_env}-${var.project_id}-sombra-kms-policy"
   description = "Allows Sombra instances to get the KMS key"
   policy      = data.aws_iam_policy_document.kms_policy_doc.json
+}
+
+############################
+# AWS Integration Policies #
+############################
+
+data "aws_iam_policy_document" "aws_policy_doc" {
+  statement {
+    sid    = "AllowAwsIntegrationAccess"
+    effect = "Allow"
+    actions   = ["sts:AssumeRole"]
+    resources = var.roles_to_assume
+  }
+}
+
+resource "aws_iam_policy" "aws_policy" {
+  name        = "${var.deploy_env}-${var.project_id}-sombra-aws-policy"
+  description = "Allows Sombra instances to assume AWS IAM Roles"
+  policy      = data.aws_iam_policy_document.aws_policy_doc.json
 }

@@ -448,3 +448,10 @@ variable "health_check_protocol" {
   description = "HTTP/HTTPS protocol to use on the health check"
   default     = "HTTPS"
 }
+
+variable "roles_to_assume" {
+  type        = list(string)
+  description = "AWS IAM Roles that sombra can assume, used in AWS integrations"
+  default     = ["*"]
+}
+
