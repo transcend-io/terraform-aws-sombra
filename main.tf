@@ -158,9 +158,9 @@ module "service" {
     module.container_definition.secrets_policy_arns,
     [aws_iam_policy.kms_policy.arn],
     var.extra_task_policy_arns,
-    [aws_iam_policy.aws_policy.arn],
+    length(var.roles_to_assume) > 0 ? [aws_iam_policy.aws_policy[0].arn] : [],
   )
-  additional_task_policy_arns_count = 3 + length(var.extra_task_policy_arns)
+  additional_task_policy_arns_count = 2 + length(var.extra_task_policy_arns) + (length(var.roles_to_assume) > 0 ? 1 : 0)
 
   load_balancers = [
     # Internal target group manager
@@ -238,14 +238,15 @@ resource "aws_iam_policy" "kms_policy" {
 
 data "aws_iam_policy_document" "aws_policy_doc" {
   statement {
-    sid    = "AllowAwsIntegrationAccess"
-    effect = "Allow"
+    sid       = "AllowAwsIntegrationAccess"
+    effect    = "Allow"
     actions   = ["sts:AssumeRole"]
     resources = var.roles_to_assume
   }
 }
 
 resource "aws_iam_policy" "aws_policy" {
+  count       = length(var.roles_to_assume) > 0 ? 1 : 0
   name        = "${var.deploy_env}-${var.project_id}-sombra-aws-policy"
   description = "Allows Sombra instances to assume AWS IAM Roles"
   policy      = data.aws_iam_policy_document.aws_policy_doc.json
