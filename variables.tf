@@ -452,6 +452,6 @@ variable "health_check_protocol" {
 variable "roles_to_assume" {
   type        = list(string)
   description = "AWS IAM Roles that sombra can assume, used in AWS integrations"
-  default     = ["*"]
+  default     = []
 }
 
