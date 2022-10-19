@@ -132,7 +132,7 @@ module external_load_balancer {
   # Target groups
   target_groups = [{
     name             = "${var.deploy_env}-${var.project_id}-external"
-    backend_protocol = "HTTPS"
+    backend_protocol = var.health_check_protocol
     target_type      = "ip"
     backend_port     = var.external_port
     health_check = {
@@ -140,7 +140,7 @@ module external_load_balancer {
       interval = 30
       port     = var.external_port
       path     = "/health"
-      protocol = "HTTPS"
+      backend_protocol = var.health_check_protocol
     }
   }]
 
