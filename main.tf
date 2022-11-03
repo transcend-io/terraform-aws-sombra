@@ -62,6 +62,8 @@ module "container_definition" {
     # General Settings
     EXTERNAL_PORT_HTTPS = var.external_port
     INTERNAL_PORT_HTTPS = var.internal_port
+    EXTERNAL_PORT_HTTP  = var.external_port
+    INTERNAL_PORT_HTTP  = var.internal_port
     USE_TLS_AUTH        = false
 
     # JWT
