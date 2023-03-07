@@ -190,7 +190,8 @@ variable "saml_config" {
   __Fields__
   entrypoint: identity provider entrypoint (is required to be spec-compliant when the request is signed)
   issuer: issuer string to supply to identity provider
-  cert: the IDP's public signing certificate used to validate the signatures of the incoming SAML Responses
+  cert: the IDP's public signing certificate used to validate the signatures of the incoming SAML Responses. 
+        The lines "BEGIN CERTIFICATE" and "END CERTIFICATE" should be stripped out and the certificate should be provided on a single line.
   audience: expected saml response Audience (if not provided, Audience won't be verified)
   acceptedClockSkewMs: Time in milliseconds of skew that is acceptable between client and server when
                        checking OnBefore and NotOnOrAfter assertion condition validity timestamps.
