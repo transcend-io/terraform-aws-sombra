@@ -22,7 +22,7 @@ module "load_balancer" {
   # VPC Settings
   subnets         = var.public_subnet_ids
   vpc_id          = var.vpc_id
-  security_groups = [module.single_security_group.this_security_group_id]
+  security_groups = var.use_network_load_balancer ? [] : [module.single_security_group.this_security_group_id]
 
   load_balancer_type = var.use_network_load_balancer ? "network" : "application"
 
@@ -94,7 +94,7 @@ module "single_security_group" {
   source  = "terraform-aws-modules/security-group/aws"
   version = "3.17.0"
 
-  create = !var.use_private_load_balancer
+  create = !var.use_private_load_balancer && !var.use_network_load_balancer
 
   name        = "${var.project_id}-sombra-alb"
   description = "Security group for sombra alb"
