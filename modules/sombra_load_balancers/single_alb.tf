@@ -27,7 +27,7 @@ module "load_balancer" {
   load_balancer_type = var.use_network_load_balancer ? "network" : "application"
 
   # Listeners for ALB
-  https_listeners = var.use_network_load_balancer ? null : [
+  https_listeners = var.use_network_load_balancer ? [] : [
     # Internal Listener
     {
       certificate_arn    = var.certificate_arn
