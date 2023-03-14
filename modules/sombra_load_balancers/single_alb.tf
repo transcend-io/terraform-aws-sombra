@@ -27,7 +27,7 @@ module "load_balancer" {
   load_balancer_type = var.use_network_load_balancer ? "network" : "application"
 
   # Listeners for ALB
-  https_listeners = var.use_network_load_balancer ? [] : [
+  https_listeners = var.use_network_load_balancer ? null : [
     # Internal Listener
     {
       certificate_arn    = var.certificate_arn
@@ -53,7 +53,7 @@ module "load_balancer" {
     port               = var.external_port
     protocol           = "TCP"
     target_group_index = 1
-  }] : []
+  }] : null
 
   # Target groups
   target_groups = [
