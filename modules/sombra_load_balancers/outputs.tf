@@ -19,12 +19,12 @@ output private_zone_id {
 }
 
 output internal_listener_arn {
-  value       = var.use_network_load_balancer ? var.load_balancer.http_tcp_listener_arns[0] : var.use_private_load_balancer ? module.internal_load_balancer.https_listener_arns[0] : module.load_balancer.https_listener_arns[0]
+  value       = var.use_network_load_balancer ? module.load_balancer.http_tcp_listener_arns[0] : var.use_private_load_balancer ? module.internal_load_balancer.https_listener_arns[0] : module.load_balancer.https_listener_arns[0]
   description = "ARN of the internal sombra load balancer listener"
 }
 
 output external_listener_arn {
-  value       = var.use_network_load_balancer ? var.load_balancer.http_tcp_listener_arns[0] : var.use_private_load_balancer ? module.external_load_balancer.https_listener_arns[0] : module.load_balancer.https_listener_arns[1]
+  value       = var.use_network_load_balancer ? module.load_balancer.http_tcp_listener_arns[0] : var.use_private_load_balancer ? module.external_load_balancer.https_listener_arns[0] : module.load_balancer.https_listener_arns[1]
   description = "ARN of the external sombra load balancer listener"
 }
 
