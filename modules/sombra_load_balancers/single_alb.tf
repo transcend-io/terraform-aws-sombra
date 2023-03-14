@@ -53,7 +53,7 @@ module "load_balancer" {
     port               = var.external_port
     protocol           = "TCP"
     target_group_index = 1
-  }] : null
+  }] : []
 
   # Target groups
   target_groups = [
