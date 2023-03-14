@@ -24,8 +24,10 @@ module "load_balancer" {
   vpc_id          = var.vpc_id
   security_groups = [module.single_security_group.this_security_group_id]
 
-  # Listeners
-  https_listeners = [
+  load_balancer_type = var.use_network_load_balancer ? "network" : "application"
+
+  # Listeners for ALB
+  https_listeners = var.use_network_load_balancer ? [] : [
     # Internal Listener
     {
       certificate_arn    = var.certificate_arn
@@ -41,6 +43,17 @@ module "load_balancer" {
       target_group_index = 1
     },
   ]
+
+  # Listeners for NLB
+  http_tcp_listeners = var.use_network_load_balancer ? [{
+    port               = var.internal_port
+    protocol           = "TCP"
+    target_group_index = 0
+  },{
+    port               = var.external_port
+    protocol           = "TCP"
+    target_group_index = 1
+  }] : []
 
   # Target groups
   target_groups = [

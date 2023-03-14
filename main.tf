@@ -33,6 +33,7 @@ module "load_balancer" {
   zone_id                   = var.zone_id
   certificate_arn           = var.certificate_arn
   use_private_load_balancer = var.use_private_load_balancer
+  use_network_load_balancer = var.use_network_load_balancer
 
   tags = var.tags
 }
