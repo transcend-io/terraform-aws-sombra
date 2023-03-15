@@ -9,7 +9,7 @@ output external_target_group_arn {
 }
 
 output security_group_ids {
-  value       = var.use_private_load_balancer ? [module.internal_security_group.this_security_group_id, module.external_security_group.this_security_group_id] : [module.single_security_group.this_security_group_id]
+  value       = var.use_network_load_balancer ? [] : var.use_private_load_balancer ? [module.internal_security_group.this_security_group_id, module.external_security_group.this_security_group_id] : [module.single_security_group.this_security_group_id]
   description = "The ids of all security groups set on the ALB. We require that the tasks can only talk to the ALB"
 }
 
