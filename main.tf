@@ -33,6 +33,7 @@ module "load_balancer" {
   zone_id                   = var.zone_id
   certificate_arn           = var.certificate_arn
   use_private_load_balancer = var.use_private_load_balancer
+  use_network_load_balancer = var.use_network_load_balancer
 
   tags = var.tags
 }
@@ -137,7 +138,7 @@ locals {
 
 module "service" {
   source  = "transcend-io/fargate-service/aws"
-  version = "0.6.2"
+  version = "0.7.0"
 
   name         = "${var.deploy_env}-${var.project_id}-sombra-service"
   cpu          = var.cpu
@@ -147,7 +148,8 @@ module "service" {
 
   vpc_id                 = var.vpc_id
   subnet_ids             = var.private_subnet_ids
-  alb_security_group_ids = module.load_balancer.security_group_ids
+  alb_security_group_ids = var.use_network_load_balancer ? null : module.load_balancer.security_group_ids
+  ingress_cidr_blocks    = var.use_network_load_balancer ? var.network_load_balancer_ingress_cidr_blocks : null
   container_definitions = format(
     "[%s]",
     join(",", distinct(concat(

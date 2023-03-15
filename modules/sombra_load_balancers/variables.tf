@@ -9,6 +9,17 @@ variable use_private_load_balancer {
   EOF
 }
 
+variable use_network_load_balancer {
+  type        = bool
+  description = <<EOF
+  If true, the internal load balancer will use a Network Load Balancer instead of an Application Load Balancer.
+
+  Use this if you plan to terminate SSL on the sombra itself, and not on the load balancer. This should always be
+  used with `tls_config` on the root module.
+  EOF
+  default = false
+}
+
 variable deploy_env {
   description = "The environment to deploy to, usually dev, staging, or prod"
 }
