@@ -408,6 +408,12 @@ variable use_network_load_balancer {
   default = false
 }
 
+variable network_load_balancer_ingress_cidr_blocks {
+  type        = list(string)
+  description = "CIDR blocks that can talk to sombra when using an NLB"
+  default = ["0.0.0.0/0"]
+}
+
 variable "tags" {
   type        = map(string)
   description = "Tags to apply to all resources that support them"
