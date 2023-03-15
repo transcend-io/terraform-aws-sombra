@@ -137,10 +137,8 @@ locals {
 }
 
 module "service" {
-  # DO NOT SUBMIT
-  # source  = "transcend-io/fargate-service/aws"
-  # version = "0.6.2"
-  source = "git::https://github.com/transcend-io/terraform-aws-fargate-service?ref=dmattia/ingress_cidr"
+  source  = "transcend-io/fargate-service/aws"
+  version = "0.7.0"
 
   name         = "${var.deploy_env}-${var.project_id}-sombra-service"
   cpu          = var.cpu
