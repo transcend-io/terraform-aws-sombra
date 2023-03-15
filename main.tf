@@ -140,7 +140,7 @@ module "service" {
   # DO NOT SUBMIT
   # source  = "transcend-io/fargate-service/aws"
   # version = "0.6.2"
-  source = "github.com/transcend-io/fargate-service?ref=dmattia/ingress_cidr"
+  source = "git::https://github.com/transcend-io/terraform-aws-fargate-service?ref=dmattia/ingress_cidr"
 
   name         = "${var.deploy_env}-${var.project_id}-sombra-service"
   cpu          = var.cpu
