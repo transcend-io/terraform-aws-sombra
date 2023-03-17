@@ -11,7 +11,7 @@ module "load_balancer" {
   source  = "terraform-aws-modules/alb/aws"
   version = "5.10.0"
 
-  create_lb = !var.use_private_load_balancer
+  create_lb = !var.use_private_load_balancer && !var.use_network_load_balancer
 
   # General Settings
   name                       = local.alb_name
@@ -22,12 +22,10 @@ module "load_balancer" {
   # VPC Settings
   subnets         = var.public_subnet_ids
   vpc_id          = var.vpc_id
-  security_groups = var.use_network_load_balancer ? [] : [module.single_security_group.this_security_group_id]
-
-  load_balancer_type = var.use_network_load_balancer ? "network" : "application"
+  security_groups = [module.single_security_group.this_security_group_id]
 
   # Listeners for ALB
-  https_listeners = var.use_network_load_balancer ? [] : [
+  https_listeners = [
     # Internal Listener
     {
       certificate_arn    = var.certificate_arn
@@ -44,23 +42,12 @@ module "load_balancer" {
     },
   ]
 
-  # Listeners for NLB
-  http_tcp_listeners = var.use_network_load_balancer ? [{
-    port               = var.internal_port
-    protocol           = "TCP"
-    target_group_index = 0
-  },{
-    port               = var.external_port
-    protocol           = "TCP"
-    target_group_index = 1
-  }] : []
-
   # Target groups
   target_groups = [
     # Internal group
     {
       name             = "${var.deploy_env}-${var.project_id}-internal"
-      backend_protocol = var.use_network_load_balancer ? "TCP" : var.health_check_protocol
+      backend_protocol = var.health_check_protocol
       target_type      = "ip"
       backend_port     = var.internal_port
       health_check = {
@@ -74,7 +61,7 @@ module "load_balancer" {
     # External group
     {
       name             = "${var.deploy_env}-${var.project_id}-external"
-      backend_protocol = var.use_network_load_balancer ? "TCP" : var.health_check_protocol
+      backend_protocol = var.health_check_protocol
       target_type      = "ip"
       backend_port     = var.external_port
       health_check = {
@@ -142,7 +129,7 @@ module "single_security_group" {
 ##################################################
 
 resource "aws_route53_record" "single_alb_alias" {
-  count = var.use_private_load_balancer ? 0 : 1
+  count = var.use_private_load_balancer || var.use_network_load_balancer ? 0 : 1
 
   zone_id = var.zone_id
   name    = "${var.subdomain}.${var.root_domain}"

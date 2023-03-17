@@ -137,8 +137,10 @@ locals {
 }
 
 module "service" {
-  source  = "transcend-io/fargate-service/aws"
-  version = "0.7.0"
+  // DO NOT SUBMIT: Change back
+  # source  = "transcend-io/fargate-service/aws"
+  # version = "0.7.0"
+  source = "git::https://github.com/transcend-io/terraform-aws-fargate-service?ref=dmattia/sgs_and_cidrs_in_lb_defn"
 
   name         = "${var.deploy_env}-${var.project_id}-sombra-service"
   cpu          = var.cpu
@@ -148,8 +150,7 @@ module "service" {
 
   vpc_id                 = var.vpc_id
   subnet_ids             = var.private_subnet_ids
-  alb_security_group_ids = var.use_network_load_balancer ? null : module.load_balancer.security_group_ids
-  ingress_cidr_blocks    = var.use_network_load_balancer ? var.network_load_balancer_ingress_cidr_blocks : null
+  alb_security_group_ids = module.load_balancer.security_group_ids
   container_definitions = format(
     "[%s]",
     join(",", distinct(concat(
@@ -172,12 +173,16 @@ module "service" {
       target_group_arn = module.load_balancer.internal_target_group_arn
       container_name   = module.container_definition.container_name
       container_port   = var.internal_port
+      security_groups  = var.use_network_load_balancer ? [] : null
+      cidr_blocks      = var.use_network_load_balancer ? [var.network_load_balancer_ingress_cidr_blocks] : null
     },
     # External target group manager
     {
       target_group_arn = module.load_balancer.external_target_group_arn
       container_name   = module.container_definition.container_name
       container_port   = var.external_port
+      security_groups  = module.load_balancer.security_group_ids
+      cidr_blocks      = []
     }
   ]
 
