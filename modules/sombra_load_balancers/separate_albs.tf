@@ -194,7 +194,7 @@ resource "aws_route53_record" "external_alb_alias" {
   count = var.use_private_load_balancer || var.use_network_load_balancer ? 1 : 0
 
   zone_id = var.zone_id
-  name    = var.use_private_load_balancer ? "${var.subdomain}.${var.root_domain}" : "external.${var.subdomain}.${var.root_domain}"
+  name    = var.use_private_load_balancer ? "${var.subdomain}.${var.root_domain}" : "external-${var.subdomain}.${var.root_domain}"
   type    = "A"
 
   alias {
