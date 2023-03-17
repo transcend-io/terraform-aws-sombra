@@ -174,7 +174,7 @@ module "service" {
       container_name   = module.container_definition.container_name
       container_port   = var.internal_port
       security_groups  = var.use_network_load_balancer ? [] : null
-      cidr_blocks      = var.use_network_load_balancer ? [var.network_load_balancer_ingress_cidr_blocks] : null
+      cidr_blocks      = var.use_network_load_balancer ? var.network_load_balancer_ingress_cidr_blocks : null
     },
     # External target group manager
     {
