@@ -181,6 +181,8 @@ module "service" {
       target_group_arn = module.load_balancer.external_target_group_arn
       container_name   = module.container_definition.container_name
       container_port   = var.external_port
+      security_groups  = module.load_balancer.security_group_ids
+      cidr_blocks      = []
     }
   ]
 

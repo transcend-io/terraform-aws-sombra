@@ -161,7 +161,7 @@ module "external_security_group" {
   source  = "terraform-aws-modules/security-group/aws"
   version = "3.17.0"
 
-  create = var.use_private_load_balancer
+  create = var.use_private_load_balancer || var.use_network_load_balancer
 
   name        = "${var.project_id}-external-alb"
   description = "Security group for the external, public sombra alb"
@@ -191,7 +191,7 @@ module "external_security_group" {
 ###########################################################
 
 resource "aws_route53_record" "external_alb_alias" {
-  count = var.use_private_load_balancer ? 1 : 0
+  count = var.use_private_load_balancer || var.use_network_load_balancer ? 1 : 0
 
   zone_id = var.zone_id
   name    = "${var.subdomain}.${var.root_domain}"
