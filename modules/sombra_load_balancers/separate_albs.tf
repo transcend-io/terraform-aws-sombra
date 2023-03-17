@@ -150,7 +150,7 @@ module external_load_balancer {
       interval = 30
       port     = var.external_port
       path     = "/health"
-      backend_protocol = var.health_check_protocol
+      protocol = var.health_check_protocol
     }
   }]
 
