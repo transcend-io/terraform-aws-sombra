@@ -15,7 +15,7 @@ module internal_load_balancer {
   idle_timeout               = var.idle_timeout
 
   # VPC Settings
-  subnets         = var.private_subnet_ids
+  subnets         = var.use_private_load_balancer ? var.private_subnet_ids : var.public_subnet_ids
   vpc_id          = var.vpc_id
   security_groups = var.use_network_load_balancer ? [] : [module.internal_security_group.this_security_group_id]
 
