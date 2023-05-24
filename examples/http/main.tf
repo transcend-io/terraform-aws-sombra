@@ -1,7 +1,7 @@
 # To use the sombra module, you must declare the AWS and Vault providers explicitly
 # Your settings will very likely be different here. 
 provider "aws" {
-  profile = "dev"
+  profile = "transcend-sandbox"
   region = "eu-west-1"
 }
 provider "vault" {
@@ -9,7 +9,7 @@ provider "vault" {
   # See https://github.com/hashicorp/terraform-provider-vault/issues/666
   # for an explanation of why a "fake" set of settings is required when using
   # modules that optionally use the vault provider
-  address = "https://vault.${local.parent_domain}"
+  address = "https://vault.dev.trancsend.com"
   token   = "not-a-real-token"
   skip_tls_verify = true
   skip_child_token = true
@@ -18,9 +18,9 @@ provider "vault" {
 locals {
   subdomain = "http-test"
   # You should pick a hosted zone that is in your AWS Account
-  parent_domain = "sombra.dev.trancsend.com"
+  parent_domain = "dipack-test-sombra.dev.trancsend.com"
   # Org URI found on https://app.transcend.io/infrastructure/sombra
-  organization_uri = "<org_uri>"
+  organization_uri = "abcd-efg-hijk"
 }
 
 module "vpc" {
