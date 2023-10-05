@@ -13,6 +13,7 @@ provider "vault" {
   token   = "not-a-real-token"
   skip_tls_verify = true
   skip_child_token = true
+  skip_get_vault_version = true
 }
 
 locals {
@@ -25,7 +26,7 @@ locals {
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 2.18.0"
+  version = "~> 5.1.2"
 
   name = "sombra-example-http-test-vpc"
   cidr = "10.0.0.0/16"
@@ -52,7 +53,7 @@ module "acm" {
 
 module "sombra" {
   source  = "transcend-io/sombra/aws"
-  version = "1.4.1"
+  version = "1.5.0"
 
   # General Settings
   deploy_env       = "example"
