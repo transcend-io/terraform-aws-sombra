@@ -53,7 +53,7 @@ module "acm" {
 
 module "sombra" {
   source  = "transcend-io/sombra/aws"
-  version = "1.5.0"
+  version = "1.8.0"
 
   # General Settings
   deploy_env       = "example"
@@ -85,9 +85,11 @@ module "sombra" {
     cert = "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUNNVENDQWJZQ0ZFL056RUZVU201ZUtwQ29BczlNVjdwcnpqYjBNQW9HQ0NxR1NNNDlCQU1DTUh3eEN6QUoKQmdOVkJBWVRBbFZUTVFzd0NRWURWUVFJREFKRFFURVdNQlFHQTFVRUJ3d05VMkZ1SUVaeVlXNWphWE5qYnpFWApNQlVHQTFVRUNnd09WSEpoYm5OalpXNWtJRWx1WXk0eEVqQVFCZ05WQkFNTUNXeHZZMkZzYUc5emRERWJNQmtHCkNTcUdTSWIzRFFFSkFSWU1ZMlZ5ZEhOQWVXOHVZMjl0TUI0WERUSXlNRGd3T1RFME5URTFNRm9YRFRJeU1Ea3cKT0RFME5URTFNRm93ZkRFTE1Ba0dBMVVFQmhNQ1ZWTXhDekFKQmdOVkJBZ01Ba05CTVJZd0ZBWURWUVFIREExVApZVzRnUm5KaGJtTnBjMk52TVJjd0ZRWURWUVFLREE1VWNtRnVjMk5sYm1RZ1NXNWpMakVTTUJBR0ExVUVBd3dKCmJHOWpZV3hvYjNOME1Sc3dHUVlKS29aSWh2Y05BUWtCRmd4alpYSjBjMEI1Ynk1amIyMHdkakFRQmdjcWhrak8KUFFJQkJnVXJnUVFBSWdOaUFBVEY1bWx5YXo0djl0MmF1MDd2WnVLLzdrVzFGTEZHRnZWUDY2VEpnYXAvMDE1WAozdVFtR2NQRndZUUJGSFZHOEFEUFRBb0FmMGt0WnJySTk5Q1FlY1FNR0YvWkRlUW9wc3NsaHdvRThmWjJDbDNpCm9XRnZPOGJkZkZESzJmWHBtS3N3Q2dZSUtvWkl6ajBFQXdJRGFRQXdaZ0l4QUlEZENjUVQ4V2I5c3NqZGhRUTIKdFZCZG5YS283UVlUWnpNL1YyOWlvTWZ4emFYL0ZEaXdvRmNTMzEwNnZISWJVd0l4QU4rWXlDd0tweE8vaGx4VwprK0h3RDNvWWUvS3IwRmxwclpXQlVnb2QwQVhIbXVINzJnQzdaeE9CcG9UcnRDRXNzdz09Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
     key = "LS0tLS1CRUdJTiBFTkNSWVBURUQgUFJJVkFURSBLRVktLS0tLQpNSUlCRXpCT0Jna3Foa2lHOXcwQkJRMHdRVEFwQmdrcWhraUc5dzBCQlF3d0hBUUlLS2VGRzNidWt1OENBZ2dBCk1Bd0dDQ3FHU0liM0RRSUpCUUF3RkFZSUtvWklodmNOQXdjRUNDUExlQkYvUjhsY0JJSEF2N3pQWHpZZFVPOWUKTWF6dTg4c0doaUsrc2k4M1NueTFvdUZQT21mMkRqZjNqbE11Z3g0NWJVWVhLSitVc0tia1l3YU50d2lEaGxRQgpTZ21mbDBobi9hN2dIQys5OEZEcno0SEFvVEVuWXVWcnVxZXpEVHB1MGxNUnhraFZnUUhPOWJ3bDlZWVpZN3dSCnBDOUVTYmVYeGNhdXhPU2svcUhDdVg0cXl0c0RVM0lITDR1OS8yN3NtU0kyRzdRZjFGNFlobFNicm9uKy9KMzEKcUFrTmlDSUwybFVWdlFGMEdFSHQ5QlBTVHdDdHNvK3RrWmpBNjBhazJQK1d1VEUyYkpuYgotLS0tLUVORCBFTkNSWVBURUQgUFJJVkFURSBLRVktLS0tLQo="
   }
-  extra_envs = {
-    SINGLE_TENANT_SYNC_TIMEOUT = "0" # set to 0 to disable single tenant sync timeout
-  }
+  # extra_envs = {
+  #   # This is just an example of an env you can set, though all the main environment variables
+  #   # can be configured through other terraform variables.
+  #   SINGLE_TENANT_SYNC_TIMEOUT = "0" # set to 0 to disable single tenant sync timeout
+  # }
 
   # The root secrets that you should generate yourself and keep secret
   # See https://docs.transcend.io/docs/security/end-to-end-encryption/deploying-sombra#6.-cycle-your-keys for information on how to generate these values
@@ -95,4 +97,12 @@ module "sombra" {
   internal_key_hash = "wm/mZTcSALaEibJXmhdq8g7lUN19kgXQ4hWgjt3woE8="
 
   tags = {}
+}
+
+output "customer_ingress_url" {
+  value = module.sombra.internal_url
+}
+
+output "transcend_ingress_url" {
+  value = module.sombra.external_url
 }

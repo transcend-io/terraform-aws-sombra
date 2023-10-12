@@ -53,7 +53,7 @@ module "acm" {
 
 module "sombra" {
   source  = "transcend-io/sombra/aws"
-  version = "1.5.0"
+  version = "1.8.0"
 
   # General Settings
   deploy_env       = "example"
@@ -83,9 +83,11 @@ module "sombra" {
   external_port         = 5042
   internal_port         = 5039
   health_check_protocol = "HTTP"
-  extra_envs = {
-    SINGLE_TENANT_SYNC_TIMEOUT = "0" # set to 0 to disable single tenant sync timeout
-  }
+  # extra_envs = {
+  #   # This is just an example of an env you can set, though all the main environment variables
+  #   # can be configured through other terraform variables.
+  #   SINGLE_TENANT_SYNC_TIMEOUT = "0" # set to 0 to disable single tenant sync timeout
+  # }
 
   # The root secrets that you should generate yourself and keep secret
   # See https://docs.transcend.io/docs/security/end-to-end-encryption/deploying-sombra#6.-cycle-your-keys for information on how to generate these values
@@ -93,4 +95,12 @@ module "sombra" {
   internal_key_hash = "wm/mZTcSALaEibJXmhdq8g7lUN19kgXQ4hWgjt3woE8="
 
   tags = {}
+}
+
+output "customer_ingress_url" {
+  value = module.sombra.internal_url
+}
+
+output "transcend_ingress_url" {
+  value = module.sombra.external_url
 }
