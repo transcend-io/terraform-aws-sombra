@@ -236,7 +236,7 @@ data "aws_iam_policy_document" "kms_policy_doc" {
     sid     = "AllowGeneratingRandom"
     effect  = "Allow"
     actions = ["kms:GenerateRandom"]
-    # This has to be a `*` since, `kms:GenerateRandom` does not allow for specific resources.
+    # This has to be a `*` since `kms:GenerateRandom` does not allow for specific resources.
     resources = ["*"]
   }
 }
