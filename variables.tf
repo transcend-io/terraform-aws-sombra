@@ -397,7 +397,7 @@ variable "extra_secret_envs" {
   default     = {}
 }
 
-variable use_network_load_balancer {
+variable "use_network_load_balancer" {
   type        = bool
   description = <<EOF
   If true, the internal load balancer will use a Network Load Balancer instead of an Application Load Balancer.
@@ -405,13 +405,13 @@ variable use_network_load_balancer {
   Use this if you plan to terminate SSL on the sombra itself, and not on the load balancer. This should always be
   used with `tls_config`.
   EOF
-  default = false
+  default     = false
 }
 
-variable network_load_balancer_ingress_cidr_blocks {
+variable "network_load_balancer_ingress_cidr_blocks" {
   type        = list(string)
   description = "CIDR blocks that can talk to sombra when using an NLB"
-  default = ["0.0.0.0/0"]
+  default     = ["0.0.0.0/0"]
 }
 
 variable "tags" {

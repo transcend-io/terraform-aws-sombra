@@ -139,7 +139,7 @@ locals {
 module "service" {
   source  = "transcend-io/fargate-service/aws"
   version = "0.9.0"
-  
+
   name         = "${var.deploy_env}-${var.project_id}-sombra-service"
   cpu          = var.cpu
   memory       = var.memory
@@ -230,6 +230,14 @@ data "aws_iam_policy_document" "kms_policy_doc" {
     # TODO: Make the actions tighter.
     actions   = ["kms:*"]
     resources = var.use_local_kms ? ["*"] : [aws_kms_key.key.0.arn]
+  }
+
+  statement {
+    sid     = "AllowGeneratingRandom"
+    effect  = "Allow"
+    actions = ["kms:GenerateRandom"]
+    # This has to be a `*` since `kms:GenerateRandom` does not allow for specific resources.
+    resources = ["*"]
   }
 }
 
