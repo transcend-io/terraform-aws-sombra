@@ -125,6 +125,12 @@ variable "health_check_protocol" {
   default     = "HTTPS"
 }
 
+variable "ssl_policy" {
+  type        = string
+  description = "The Security Policy to use for SSL on the load balancers"
+  default     = "ELBSecurityPolicy-TLS-1-2-Ext-2018-06"
+}
+
 variable tags {
   type        = map(string)
   description = "Tags to apply to all resources that support them"

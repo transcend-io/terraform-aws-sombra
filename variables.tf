@@ -473,3 +473,8 @@ variable "roles_to_assume" {
   default     = []
 }
 
+variable "ssl_policy" {
+  type        = string
+  description = "The Security Policy to use for SSL on the load balancers"
+  default     = "ELBSecurityPolicy-TLS-1-2-Ext-2018-06"
+}
