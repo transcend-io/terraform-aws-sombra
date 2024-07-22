@@ -11,6 +11,7 @@ module "load_balancer" {
   project_id        = var.project_id
   alb_access_logs   = var.alb_access_logs
   idle_timeout      = var.idle_timeout
+  var.ssl_policy    = var.ssl_policy
 
   # Health check settings
   health_check_protocol = var.health_check_protocol

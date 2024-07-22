@@ -30,14 +30,14 @@ module "load_balancer" {
     {
       certificate_arn    = var.certificate_arn
       port               = var.internal_port
-      ssl_policy         = "ELBSecurityPolicy-2016-08"
+      ssl_policy         = var.ssl_policy
       target_group_index = 0
     },
     # External Listener
     {
       certificate_arn    = var.certificate_arn
       port               = var.external_port
-      ssl_policy         = "ELBSecurityPolicy-TLS-1-2-Ext-2018-06"
+      ssl_policy         = var.ssl_policy
       target_group_index = 1
     },
   ]

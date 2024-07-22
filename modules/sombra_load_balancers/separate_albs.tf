@@ -29,7 +29,7 @@ module internal_load_balancer {
   https_listeners = var.use_network_load_balancer ? [] : [{
     certificate_arn = var.certificate_arn
     port            = var.internal_port
-    ssl_policy      = "ELBSecurityPolicy-TLS-1-2-Ext-2018-06"
+    ssl_policy      = var.ssl_policy
   }]
 
   # Listeners if NLB
@@ -136,7 +136,7 @@ module external_load_balancer {
   https_listeners = [{
     certificate_arn = var.certificate_arn
     port            = var.external_port
-    ssl_policy      = "ELBSecurityPolicy-TLS-1-2-Ext-2018-06"
+    ssl_policy      = var.ssl_policy
   }]
 
   # Target groups
