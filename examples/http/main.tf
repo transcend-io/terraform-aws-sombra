@@ -20,8 +20,9 @@ locals {
   subdomain = "http-test"
   # You should pick a hosted zone that is in your AWS Account
   parent_domain = "sombra.dev.trancsend.com"
-  # Org URI found on https://app.transcend.io/infrastructure/sombra
+  # Org URI found on https://app.transcend.io/infrastructure/sombra/sombras
   organization_uri = "<org_uri>"
+  sombra_id = "<sombra_id>"
 }
 
 module "vpc" {
@@ -83,11 +84,13 @@ module "sombra" {
   external_port         = 5042
   internal_port         = 5039
   health_check_protocol = "HTTP"
-  # extra_envs = {
-  #   # This is just an example of an env you can set, though all the main environment variables
-  #   # can be configured through other terraform variables.
-  #   SINGLE_TENANT_SYNC_TIMEOUT = "0" # set to 0 to disable single tenant sync timeout
-  # }
+  extra_envs = {
+    SOMBRA_ID = local.sombra_id
+
+    # This is just an example of an env you can set, though all the main environment variables
+    # can be configured through other terraform variables.
+    # SINGLE_TENANT_SYNC_TIMEOUT = "0" # set to 0 to disable single tenant sync timeout
+  }
 
   # The root secrets that you should generate yourself and keep secret
   # See https://docs.transcend.io/docs/security/end-to-end-encryption/deploying-sombra#6.-cycle-your-keys for information on how to generate these values
