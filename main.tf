@@ -260,11 +260,6 @@ data "aws_ami" "amazon_linux_2" {
     name   = "name"
     values = ["/aws/service/ecs/optimized-ami/amazon-linux-2/gpu/recommended"]
   }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
 }
 
 resource "aws_launch_configuration" "llm_classifier_lc" {
