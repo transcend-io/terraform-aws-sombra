@@ -265,7 +265,7 @@ resource "aws_launch_configuration" "llm_classifier_lc" {
 
   user_data = <<-EOF
     #!/bin/bash
-    echo "ECS_CLUSTER=MyCluster" >> /etc/ecs/ecs.config
+    echo "ECS_CLUSTER=${local.cluster_name}" >> /etc/ecs/ecs.config
   EOF
 
   lifecycle {
