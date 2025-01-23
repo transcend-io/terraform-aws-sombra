@@ -252,16 +252,6 @@ resource "aws_autoscaling_group" "llm_classifier_asg" {
   }
 }
 
-data "aws_ami" "amazon_linux_2" {
-  most_recent = true
-  owners      = ["amazon"]
-
-  filter {
-    name   = "name"
-    values = ["/aws/service/ecs/optimized-ami/amazon-linux-2/gpu/recommended"]
-  }
-}
-
 data "aws_ssm_parameter" "ecs_optimized_ami" {
   name = "/aws/service/ecs/optimized-ami/amazon-linux-2/gpu/recommended"
 }
