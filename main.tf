@@ -269,7 +269,7 @@ data "aws_ami" "amazon_linux_2" {
 
 resource "aws_launch_configuration" "llm_classifier_lc" {
   count = var.cluster_id == "" && var.deploy_llm ? 1 : 0
-  name          = "${var.deploy_env}-${var.project_id}-llm-classifier-lc"
+  name          = "${var.deploy_env}-${var.project_id}-llm-classifier-launch"
   image_id      = data.aws_ami.amazon_linux_2.id
   instance_type = var.llm_classifier_instance_type
   iam_instance_profile = aws_iam_instance_profile.ecs_instance_profile.name
