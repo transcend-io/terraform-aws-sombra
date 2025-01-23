@@ -229,7 +229,7 @@ resource "aws_ecs_capacity_provider" "llm_classifier_capacity_provider" {
 
   auto_scaling_group_provider {
     auto_scaling_group_arn         = aws_autoscaling_group.llm_classifier_asg[0].arn
-    managed_termination_protection = "ENABLED"
+    managed_termination_protection = "DISABLED"
   }
 }
 
