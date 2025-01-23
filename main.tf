@@ -258,7 +258,7 @@ data "aws_ami" "amazon_linux_2" {
 
   filter {
     name   = "name"
-    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+    values = ["/aws/service/ecs/optimized-ami/amazon-linux-2/gpu/recommended"]
   }
 
   filter {
