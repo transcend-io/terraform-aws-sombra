@@ -86,6 +86,7 @@ module "container_definition" {
 
     # Global Settings
     ORGANIZATION_URI                    = var.organization_uri
+    SOMBRA_ID                           = var.sombra_id
     DATA_SUBJECT_AUTHENTICATION_METHODS = join(",", var.data_subject_auth_methods)
     EMPLOYEE_AUTHENTICATION_METHODS     = join(",", var.employee_auth_methods)
 
