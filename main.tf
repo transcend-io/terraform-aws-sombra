@@ -210,7 +210,7 @@ resource "aws_ecs_cluster" "cluster" {
   tags  = var.tags
 }
 
-resource "aws_ecs_cluster_capacity_providers" "example" {
+resource "aws_ecs_cluster_capacity_providers" "capacity_with_fargate_and_gpu" {
   count = var.cluster_id == "" && var.deploy_llm ? 1 : 0
   cluster_name = aws_ecs_cluster.cluster[0].name
 
@@ -243,6 +243,11 @@ resource "aws_autoscaling_group" "llm_classifier_asg" {
   tag {
     key                 = "Name"
     value               = "${var.deploy_env}-${var.project_id}-llm-classifier-asg"
+    propagate_at_launch = true
+  }
+  tag {
+    key                 = "AmazonECSManaged"
+    value               = true
     propagate_at_launch = true
   }
 }
