@@ -211,7 +211,7 @@ resource "aws_ecs_cluster" "cluster" {
 }
 
 resource "aws_ecs_cluster_capacity_providers" "example" {
-  count = var.cluster_id == "" ? 1 : 0
+  count = var.cluster_id == "" && var.deploy_llm ? 1 : 0
   cluster_name = aws_ecs_cluster.cluster[0].name
 
   capacity_providers = ["FARGATE", aws_ecs_capacity_provider.llm_classifier_capacity_provider[0].name]
@@ -224,7 +224,7 @@ resource "aws_ecs_cluster_capacity_providers" "example" {
 }
 
 resource "aws_ecs_capacity_provider" "llm_classifier_capacity_provider" {
-  count = var.cluster_id == "" ? 1 : 0
+  count = var.cluster_id == "" && var.deploy_llm ? 1 : 0
   name = "${var.deploy_env}-${var.project_id}-llm-classifier-capacity-provider"
 
   auto_scaling_group_provider {
@@ -234,7 +234,7 @@ resource "aws_ecs_capacity_provider" "llm_classifier_capacity_provider" {
 }
 
 resource "aws_autoscaling_group" "llm_classifier_asg" {
-  count = var.cluster_id == "" ? 1 : 0
+  count = var.cluster_id == "" && var.deploy_llm ? 1 : 0
   desired_capacity     = 1
   max_size             = 1
   min_size             = 1
@@ -263,7 +263,7 @@ data "aws_ami" "amazon_linux_2" {
 }
 
 resource "aws_launch_configuration" "llm_classifier_lc" {
-  count = var.cluster_id == "" ? 1 : 0
+  count = var.cluster_id == "" && var.deploy_llm ? 1 : 0
   name          = "${var.deploy_env}-${var.project_id}-llm-classifier-lc"
   image_id      = data.aws_ami.amazon_linux_2.id
   instance_type = var.llm_classifier_instance_type
@@ -337,6 +337,7 @@ resource "aws_iam_policy" "aws_policy" {
 ##################
 
 resource "aws_ecs_task_definition" "llm_classifier_task" {
+  count                    = var.deploy_llm ? 1 : 0
   family                   = "${var.deploy_env}-${var.project_id}-llm-classifier"
   network_mode             = "awsvpc"
   requires_compatibilities = ["EC2"]
@@ -376,18 +377,20 @@ resource "aws_ecs_task_definition" "llm_classifier_task" {
 }
 
 resource "aws_ecs_service" "llm_classifier" {
+  count           = var.deploy_llm ? 1 : 0
   name            = "${var.deploy_env}-${var.project_id}-llm-classifier"
   cluster         = local.cluster_id
-  task_definition = aws_ecs_task_definition.llm_classifier_task.arn
+  task_definition = aws_ecs_task_definition.llm_classifier_task[0].arn
   desired_count   = 1
   launch_type     = "EC2"
   network_configuration {
     subnets         = var.private_subnet_ids
-    security_groups = [aws_security_group.llm_classifier_sg.id]
+    security_groups = [aws_security_group.llm_classifier_sg[0].id]
   }
 }
 
 resource "aws_security_group" "llm_classifier_sg" {
+  count       = var.deploy_llm ? 1 : 0
   name        = "${var.deploy_env}-${var.project_id}-llm-classifier-sg"
   description = "Security group for Sombra LLM Classifier ECS service"
   vpc_id      = var.vpc_id
