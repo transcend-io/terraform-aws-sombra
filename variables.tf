@@ -19,8 +19,23 @@ variable "vpc_id" {
 }
 
 variable "ecr_image" {
-  description = "Url of the ECR repo, including the tag"
+  description = "Url of the ECR repo, including the tag, for the Sombra image"
   default     = "829095311197.dkr.ecr.eu-west-1.amazonaws.com/sombra:prod"
+}
+
+variable "deploy_llm" {
+  description = "If true, the LLM Classifier will be deployed. Note that this has considerable cost implications"
+  default     = false
+}
+
+variable "llm_classifier_ecr_image" {
+  description = "Url of the ECR repo, including the tag, for the LLM Classifier"
+  default     = "829095311197.dkr.ecr.eu-west-1.amazonaws.com/llm-classifier:prod"
+}
+
+variable "llm_classifier_instance_type" {
+  description = "The instance type to use for the LLM Classifier, which requires a GPU"
+  default     = "g5.xlarge"
 }
 
 variable "public_subnet_ids" {

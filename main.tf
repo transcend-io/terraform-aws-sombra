@@ -140,7 +140,7 @@ locals {
 
 module "service" {
   source  = "transcend-io/fargate-service/aws"
-  version = "0.9.0"
+  version = "0.9.1"
 
   name         = "${var.deploy_env}-${var.project_id}-sombra-service"
   cpu          = var.cpu
@@ -210,6 +210,69 @@ resource "aws_ecs_cluster" "cluster" {
   tags  = var.tags
 }
 
+resource "aws_ecs_cluster_capacity_providers" "example" {
+  count = var.cluster_id == "" ? 1 : 0
+  cluster_name = aws_ecs_cluster.cluster[0].name
+
+  capacity_providers = ["FARGATE", aws_ecs_capacity_provider.llm_classifier_capacity_provider[0].name]
+
+  default_capacity_provider_strategy {
+    base              = 1
+    weight            = 100
+    capacity_provider = "FARGATE"
+  }
+}
+
+resource "aws_ecs_capacity_provider" "llm_classifier_capacity_provider" {
+  count = var.cluster_id == "" ? 1 : 0
+  name = "${var.deploy_env}-${var.project_id}-llm-classifier-capacity-provider"
+
+  auto_scaling_group_provider {
+    auto_scaling_group_arn         = aws_autoscaling_group.llm_classifier_asg[0].arn
+    managed_termination_protection = "ENABLED"
+  }
+}
+
+resource "aws_autoscaling_group" "llm_classifier_asg" {
+  count = var.cluster_id == "" ? 1 : 0
+  desired_capacity     = 1
+  max_size             = 1
+  min_size             = 1
+  vpc_zone_identifier  = var.private_subnet_ids
+  launch_configuration = aws_launch_configuration.llm_classifier_lc[0].id
+  tag {
+    key                 = "Name"
+    value               = "${var.deploy_env}-${var.project_id}-llm-classifier-asg"
+    propagate_at_launch = true
+  }
+}
+
+data "aws_ami" "amazon_linux_2" {
+  most_recent = true
+  owners      = ["amazon"]
+
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+}
+
+resource "aws_launch_configuration" "llm_classifier_lc" {
+  count = var.cluster_id == "" ? 1 : 0
+  name          = "${var.deploy_env}-${var.project_id}-llm-classifier-lc"
+  image_id      = data.aws_ami.amazon_linux_2.id
+  instance_type = var.llm_classifier_instance_type
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
 locals {
   cluster_id   = var.cluster_id == "" ? aws_ecs_cluster.cluster[0].id : var.cluster_id
   cluster_name = var.cluster_name == "" ? aws_ecs_cluster.cluster[0].name : var.cluster_name
@@ -267,4 +330,81 @@ resource "aws_iam_policy" "aws_policy" {
   name        = "${var.deploy_env}-${var.project_id}-sombra-aws-policy"
   description = "Allows Sombra instances to assume AWS IAM Roles"
   policy      = data.aws_iam_policy_document.aws_policy_doc.json
+}
+
+##################
+# LLM Classifier #
+##################
+
+resource "aws_ecs_task_definition" "llm_classifier_task" {
+  family                   = "${var.deploy_env}-${var.project_id}-llm-classifier"
+  network_mode             = "awsvpc"
+  requires_compatibilities = ["EC2"]
+  cpu                      = "2048"
+  memory                   = "8192"
+  execution_role_arn       = module.service.role_arn
+  task_role_arn            = module.service.role_arn
+
+  container_definitions = jsonencode([
+    {
+      name      = "sombra-llm-classifier"
+      image     = var.llm_classifier_ecr_image
+      essential = true
+      memory    = 8192
+      cpu       = 2048
+      resourceRequirements = [
+        {
+          type  = "GPU"
+          value = "1"
+        }
+      ]
+      environment = [
+        { name = "LLM_SERVER_PORT", value = "6081" },
+        { name = "LLM_SERVER_CONCURRENCY", value = "2" },
+        { name = "LLM_SERVER_TIMEOUT", value = "120" }
+      ]
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group         = "/ecs/${var.deploy_env}-${var.project_id}-llm-classifier"
+          awslogs-region        = var.aws_region
+          awslogs-stream-prefix = "ecs"
+        }
+      }
+    }
+  ])
+}
+
+resource "aws_ecs_service" "llm_classifier" {
+  name            = "${var.deploy_env}-${var.project_id}-llm-classifier"
+  cluster         = local.cluster_id
+  task_definition = aws_ecs_task_definition.llm_classifier_task.arn
+  desired_count   = 1
+  launch_type     = "EC2"
+  network_configuration {
+    subnets         = var.private_subnet_ids
+    security_groups = [aws_security_group.llm_classifier_sg.id]
+  }
+}
+
+resource "aws_security_group" "llm_classifier_sg" {
+  name        = "${var.deploy_env}-${var.project_id}-llm-classifier-sg"
+  description = "Security group for Sombra LLM Classifier ECS service"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    from_port   = 6081
+    to_port     = 6081
+    protocol    = "tcp"
+    security_groups = [module.service.service_sg_id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = var.tags
 }
