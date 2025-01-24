@@ -282,9 +282,37 @@ resource "aws_iam_role" "ecs_instance_role" {
       {
         Effect = "Allow"
         Principal = {
-          Service = "ec2.amazonaws.com"
+          Service = [
+            "ec2.amazonaws.com",
+            "ecs.amazonaws.com",
+            "ecs-tasks.amazonaws.com"
+          ]
         }
         Action = "sts:AssumeRole"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "ecs_instance_role_policy" {
+  name   = "${var.deploy_env}-${var.project_id}-ecs-instance-role-policy"
+  role   = aws_iam_role.ecs_instance_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "logs:PutLogEvents",
+          "logs:CreateLogStream",
+          "logs:CreateLogGroup",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchGetImage",
+          "ecr:BatchCheckLayerAvailability"
+        ]
+        Resource = "*"
       }
     ]
   })
