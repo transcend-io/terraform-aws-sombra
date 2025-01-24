@@ -262,6 +262,7 @@ resource "aws_launch_configuration" "llm_classifier_lc" {
   image_id      = jsondecode(data.aws_ssm_parameter.ecs_optimized_ami.value).image_id
   instance_type = var.llm_classifier_instance_type
   iam_instance_profile = aws_iam_instance_profile.ecs_instance_profile.name
+  security_groups = [aws_security_group.llm_classifier_instances_sg.id]
 
   user_data = <<-EOF
     #!/bin/bash
@@ -271,6 +272,28 @@ resource "aws_launch_configuration" "llm_classifier_lc" {
   lifecycle {
     create_before_destroy = true
   }
+}
+
+resource "aws_security_group" "llm_classifier_instances-sg" {
+  name        = "${var.deploy_env}-${var.project_id}-llm-classifier-instances-sg"
+  description = "Security group for LLM Classifier ECS instances"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = var.private_subnets_cidr_blocks
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = var.tags
 }
 
 resource "aws_iam_role" "ecs_instance_role" {
