@@ -35,7 +35,7 @@ variable "llm_classifier_ecr_image" {
 
 variable "llm_classifier_instance_type" {
   description = "The instance type to use for the LLM Classifier, which requires a GPU"
-  default     = "g5.xlarge"
+  default     = "g5.2xlarge"
 }
 
 variable "public_subnet_ids" {
