@@ -274,7 +274,7 @@ resource "aws_launch_configuration" "llm_classifier_lc" {
   }
 }
 
-resource "aws_security_group" "llm_classifier_instances-sg" {
+resource "aws_security_group" "llm_classifier_instances_sg" {
   name        = "${var.deploy_env}-${var.project_id}-llm-classifier-instances-sg"
   description = "Security group for LLM Classifier ECS instances"
   vpc_id      = var.vpc_id
