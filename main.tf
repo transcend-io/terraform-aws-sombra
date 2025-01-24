@@ -264,6 +264,10 @@ resource "aws_launch_configuration" "llm_classifier_lc" {
   iam_instance_profile = aws_iam_instance_profile.ecs_instance_profile.name
   security_groups = [aws_security_group.llm_classifier_instances_sg.id]
 
+  root_block_device {
+    volume_size = 100
+  }
+
   user_data = <<-EOF
     #!/bin/bash
     echo "ECS_CLUSTER=${local.cluster_name}" >> /etc/ecs/ecs.config
