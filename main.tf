@@ -469,7 +469,7 @@ resource "aws_ecs_task_definition" "llm_classifier_task" {
         }
       ]
       environment = [
-        { name = "LLM_SERVER_PORT", value = "${var.llm_classifier_port}" },
+        { name = "LLM_SERVER_PORT", value = tostring(var.llm_classifier_port) },
         { name = "LLM_SERVER_CONCURRENCY", value = "2" },
         { name = "LLM_SERVER_TIMEOUT", value = "120" }
       ]
