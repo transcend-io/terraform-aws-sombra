@@ -73,6 +73,8 @@ module "container_definition" {
     INTERNAL_PORT_HTTP  = var.internal_port
     USE_TLS_AUTH        = false
 
+    LLM_CLASSIFIER_URL = var.deploy_llm ? "http://llm-classifier:${var.llm_classifier_port}" : null
+
     # JWT
     JWT_AUTHENTICATION_PUBLIC_KEY = var.jwt_authentication_public_key
 
