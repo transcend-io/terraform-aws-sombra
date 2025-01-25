@@ -52,10 +52,10 @@ module "container_definition" {
   containerPorts = [var.internal_port, var.external_port]
   ssm_prefix     = var.project_id
 
-  portNames = {
-    "${var.internal_port}" = "internalSombra"
-    "${var.external_port}" = "externalSombra"
-  }
+  portNames = tomap({
+    tostring(var.internal_port) = "internalSombra",
+    tostring(var.external_port) = "externalSombra"
+  })
 
   use_cloudwatch_logs = var.use_cloudwatch_logs
   log_configuration   = var.log_configuration
