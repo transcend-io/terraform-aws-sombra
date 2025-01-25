@@ -45,12 +45,17 @@ module "load_balancer" {
 
 module "container_definition" {
   source  = "transcend-io/fargate-container/aws"
-  version = "1.9.2"
+  version = "1.10.0"
 
   name           = "${var.deploy_env}-${var.project_id}-container"
   image          = var.ecr_image
   containerPorts = [var.internal_port, var.external_port]
   ssm_prefix     = var.project_id
+
+  portNames = {
+    "${var.internal_port}" = "internalSombra"
+    "${var.external_port}" = "externalSombra"
+  }
 
   use_cloudwatch_logs = var.use_cloudwatch_logs
   log_configuration   = var.log_configuration
@@ -204,9 +209,20 @@ module "service" {
 # ECS Cluster #
 ###############
 
+resource "aws_service_discovery_http_namespace" "sombra_namespace" {
+  count = var.cluster_id == "" ? 1 : 0
+  name        = "${var.deploy_env}-${var.project_id}-transcend"
+  description = "Service Discovery namespace for Transcend services such as Sombra and the LLM Classifier"
+}
+
 resource "aws_ecs_cluster" "cluster" {
   count = var.cluster_id == "" ? 1 : 0
   name  = "${var.deploy_env}-${var.project_id}-sombra-cluster"
+
+  service_connect_defaults {
+    namespace = aws_service_discovery_http_namespace.sombra_namespace[0].id
+  }
+
   tags  = var.tags
 }
 
@@ -368,6 +384,7 @@ resource "aws_iam_instance_profile" "ecs_instance_profile" {
 locals {
   cluster_id   = var.cluster_id == "" ? aws_ecs_cluster.cluster[0].id : var.cluster_id
   cluster_name = var.cluster_name == "" ? aws_ecs_cluster.cluster[0].name : var.cluster_name
+  cluster_namespace = var.cluster_namespace == "" ? aws_service_discovery_http_namespace.sombra_namespace[0].id : var.cluster_namespace
 }
 
 ##############
@@ -452,7 +469,7 @@ resource "aws_ecs_task_definition" "llm_classifier_task" {
         }
       ]
       environment = [
-        { name = "LLM_SERVER_PORT", value = "6081" },
+        { name = "LLM_SERVER_PORT", value = "${var.llm_classifier_port}" },
         { name = "LLM_SERVER_CONCURRENCY", value = "2" },
         { name = "LLM_SERVER_TIMEOUT", value = "120" }
       ]
@@ -475,9 +492,23 @@ resource "aws_ecs_service" "llm_classifier" {
   task_definition = aws_ecs_task_definition.llm_classifier_task[0].arn
   desired_count   = 1
   launch_type     = "EC2"
+
   network_configuration {
     subnets         = var.private_subnet_ids
     security_groups = [aws_security_group.llm_classifier_sg[0].id]
+  }
+
+  service_connect_configuration {
+    enabled   = true
+    namespace = local.cluster_namespace
+    service {
+      discovery_name = "llm-classifier"
+      port_name      = "llm-classifier"
+      client_alias {
+        dns_name = "llm-classifier"
+        port     = var.llm_classifier_port
+      }
+    }
   }
 }
 
@@ -488,8 +519,8 @@ resource "aws_security_group" "llm_classifier_sg" {
   vpc_id      = var.vpc_id
 
   ingress {
-    from_port   = 6081
-    to_port     = 6081
+    from_port   = var.llm_classifier_port
+    to_port     = var.llm_classifier_port
     protocol    = "tcp"
     security_groups = [module.service.service_sg_id]
   }

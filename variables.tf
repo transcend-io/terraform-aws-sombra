@@ -136,6 +136,12 @@ variable "cluster_name" {
   default     = ""
 }
 
+variable "cluster_namespace" {
+  type        = string
+  description = "The service discovery namespace of the ECS cluster"
+  default     = ""
+}
+
 variable "alb_access_logs" {
   description = "Map containing access logging configuration for the load balancer."
   type        = map(string)
@@ -274,6 +280,11 @@ variable "internal_port" {
 variable "external_port" {
   description = "The port the external sombra should run on, this is the server that only Transcend's API talks to."
   default     = 5041
+}
+
+variable "llm_classifier_port" {
+  description = "The port the LLM Classifier should run on, if enabled"
+  default     = 6081
 }
 
 variable "log_level" {
