@@ -445,6 +445,12 @@ resource "aws_iam_policy" "aws_policy" {
 # LLM Classifier #
 ##################
 
+resource "aws_cloudwatch_log_group" "llm_logs" {
+  count = var.use_cloudwatch_logs ? 1 : 0
+  name  = "${var.deploy_env}-${var.project_id}-llm-classifier-log-group"
+  tags  = var.tags
+}
+
 resource "aws_ecs_task_definition" "llm_classifier_task" {
   count                    = var.deploy_llm ? 1 : 0
   family                   = "${var.deploy_env}-${var.project_id}-llm-classifier"
@@ -484,7 +490,7 @@ resource "aws_ecs_task_definition" "llm_classifier_task" {
       logConfiguration = {
         logDriver = "awslogs"
         options = {
-          awslogs-group         = "/ecs/${var.deploy_env}-${var.project_id}-llm-classifier"
+          awslogs-group         = aws_cloudwatch_log_group.llm_logs[0].name
           awslogs-region        = var.aws_region
           awslogs-stream-prefix = "ecs"
         }
