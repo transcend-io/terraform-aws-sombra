@@ -220,7 +220,7 @@ resource "aws_ecs_cluster" "cluster" {
   name  = "${var.deploy_env}-${var.project_id}-sombra-cluster"
 
   service_connect_defaults {
-    namespace = aws_service_discovery_http_namespace.sombra_namespace[0].id
+    namespace = aws_service_discovery_http_namespace.sombra_namespace[0].arn
   }
 
   tags  = var.tags
@@ -384,7 +384,7 @@ resource "aws_iam_instance_profile" "ecs_instance_profile" {
 locals {
   cluster_id   = var.cluster_id == "" ? aws_ecs_cluster.cluster[0].id : var.cluster_id
   cluster_name = var.cluster_name == "" ? aws_ecs_cluster.cluster[0].name : var.cluster_name
-  cluster_namespace = var.cluster_namespace == "" ? aws_service_discovery_http_namespace.sombra_namespace[0].id : var.cluster_namespace
+  cluster_namespace = var.cluster_namespace == "" ? aws_service_discovery_http_namespace.sombra_namespace[0].name : var.cluster_namespace
 }
 
 ##############
