@@ -10,13 +10,32 @@ variable "organization_uri" {
   description = "The unique URI for you organization from Transcend."
 }
 
+variable "sombra_id" {
+  description = "The unique ID of the sombra"
+}
+
 variable "vpc_id" {
   description = "The ID of the VPC to put this application into"
 }
 
 variable "ecr_image" {
-  description = "Url of the ECR repo, including the tag"
+  description = "Url of the ECR repo, including the tag, for the Sombra image"
   default     = "829095311197.dkr.ecr.eu-west-1.amazonaws.com/sombra:prod"
+}
+
+variable "deploy_llm" {
+  description = "If true, the LLM Classifier will be deployed. Note that this has considerable cost implications"
+  default     = false
+}
+
+variable "llm_classifier_ecr_image" {
+  description = "Url of the ECR repo, including the tag, for the LLM Classifier"
+  default     = "829095311197.dkr.ecr.eu-west-1.amazonaws.com/llm-classifier:prod"
+}
+
+variable "llm_classifier_instance_type" {
+  description = "The instance type to use for the LLM Classifier, which requires a GPU"
+  default     = "g5.2xlarge"
 }
 
 variable "public_subnet_ids" {
@@ -114,6 +133,12 @@ variable "cluster_id" {
 variable "cluster_name" {
   type        = string
   description = "The name of the ECS cluster this service should run in"
+  default     = ""
+}
+
+variable "cluster_namespace" {
+  type        = string
+  description = "The service discovery namespace of the ECS cluster"
   default     = ""
 }
 
@@ -255,6 +280,11 @@ variable "internal_port" {
 variable "external_port" {
   description = "The port the external sombra should run on, this is the server that only Transcend's API talks to."
   default     = 5041
+}
+
+variable "llm_classifier_port" {
+  description = "The port the LLM Classifier should run on, if enabled"
+  default     = 6081
 }
 
 variable "log_level" {
