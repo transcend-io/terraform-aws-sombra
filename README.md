@@ -59,6 +59,16 @@ After that, you can reference the `internal_url` output from your backend over H
   <i>Copyright © 2020 Transcend Inc.</i>
 </p>
 
+## LLM Classifier
+
+Deploying the LLM Classifier is optional, and can be done with the following steps:
+
+- Set the `deploy_llm` variable to `true`
+- Customize the `llm_classifier_ecr_image` variable if you are using docker.transcend.io or want to customize the version tag
+- Customize the EC2 instance type used if you'd like via the `llm_classifier_instance_type` variable.
+
+Please note that there are considerable cost implications, as the LLM Classifier is a GPU-based system.
+
 ## Examples
 
 We have two examples of deploying soombra in the `./examples` folder, one for using `HTTP` and one for `HTTPS`.
