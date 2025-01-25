@@ -147,13 +147,15 @@ locals {
 
 module "service" {
   source  = "transcend-io/fargate-service/aws"
-  version = "0.9.3"
+  version = "0.9.4"
 
   name         = "${var.deploy_env}-${var.project_id}-sombra-service"
   cpu          = var.cpu
   memory       = var.memory
   cluster_id   = local.cluster_id
   cluster_name = local.cluster_name
+
+  service_connect_namespace = local.cluster_namespace
 
   vpc_id                 = var.vpc_id
   subnet_ids             = var.private_subnet_ids
