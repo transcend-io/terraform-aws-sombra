@@ -462,6 +462,14 @@ resource "aws_ecs_task_definition" "llm_classifier_task" {
       essential = true
       memory    = 8192
       cpu       = 2048
+      "portMappings": [
+        {
+          containerPort = var.llm_classifier_port
+          hostPort = var.llm_classifier_port
+          name = "llm-classifier"
+          protocol = "tcp"
+        }
+      ],
       resourceRequirements = [
         {
           type  = "GPU"
