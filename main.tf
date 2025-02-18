@@ -45,7 +45,6 @@ module "container_definition" {
     # Global Settings
     ORGANIZATION_URI                    = var.organization_uri
     SOMBRA_ID                           = var.sombra_id
-    SOMBRA_REVERSE_TUNNEL_API_KEY       = var.sombra_reverse_tunnel_api_key
     DATA_SUBJECT_AUTHENTICATION_METHODS = join(",", var.data_subject_auth_methods)
     EMPLOYEE_AUTHENTICATION_METHODS     = join(",", var.employee_auth_methods)
 
@@ -73,8 +72,9 @@ module "container_definition" {
 
   secret_environment = merge({
     for key, val in {
-      OAUTH_CLIENT_SECRET       = var.oauth_config.secret_id
-      JWT_ECDSA_KEY             = var.jwt_ecdsa_key
+      OAUTH_CLIENT_SECRET           = var.oauth_config.secret_id
+      JWT_ECDSA_KEY                 = var.jwt_ecdsa_key
+      SOMBRA_REVERSE_TUNNEL_API_KEY = var.sombra_reverse_tunnel_api_key
     } :
     key => val
     if try(length(val) > 0, false)
