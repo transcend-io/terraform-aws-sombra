@@ -25,9 +25,10 @@ module "sombra" {
   version = "2.0.0"
 
   # General Settings
-  organization_uri      = "<FILL_ME_IN>"
-  sombra_id             = "<FILL_ME_IN>"
-  transcend_backend_url = "<FILL_ME_IN>"
+  organization_uri              = "<FILL_ME_IN>"
+  sombra_id                     = "<FILL_ME_IN>"
+  transcend_backend_url         = "<FILL_ME_IN>"
+  sombra_reverse_tunnel_api_key = "<FILL_ME_IN>"
 
   # VPC settings
   vpc_id                      = module.vpc.vpc_id
