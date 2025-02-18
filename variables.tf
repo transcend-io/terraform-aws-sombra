@@ -2,8 +2,12 @@
 # Required Variables #
 ######################
 
-variable "project_id" {
-  description = "A name to use in resources, such as the name of your company."
+variable "transcend_backend_url" {
+  description = "URL of Transcend's backend. This changes by region, and will often be either https://api.transcend.io or https://api.us.transcend.io"
+}
+
+variable "sombra_reverse_tunnel_api_key" {
+  description = "The API key for the Sombra. Given to you when you first create the sombra at https://app.transcend.io/infrastructure/sombra/sombras"
 }
 
 variable "organization_uri" {
@@ -16,26 +20,6 @@ variable "sombra_id" {
 
 variable "vpc_id" {
   description = "The ID of the VPC to put this application into"
-}
-
-variable "ecr_image" {
-  description = "Url of the ECR repo, including the tag, for the Sombra image"
-  default     = "829095311197.dkr.ecr.eu-west-1.amazonaws.com/sombra:prod"
-}
-
-variable "deploy_llm" {
-  description = "If true, the LLM Classifier will be deployed. Note that this has considerable cost implications"
-  default     = false
-}
-
-variable "llm_classifier_ecr_image" {
-  description = "Url of the ECR repo, including the tag, for the LLM Classifier"
-  default     = "829095311197.dkr.ecr.eu-west-1.amazonaws.com/llm-classifier:prod"
-}
-
-variable "llm_classifier_instance_type" {
-  description = "The instance type to use for the LLM Classifier, which requires a GPU"
-  default     = "g5.2xlarge"
 }
 
 variable "public_subnet_ids" {
@@ -53,77 +37,51 @@ variable "private_subnets_cidr_blocks" {
   description = "CIDR blocks that an ECS task could be in"
 }
 
-variable "zone_id" {
-  description = "The ID of the Route53 hosted zone where the public sombra subdomain will be created"
+######################
+# Optional Variables #
+######################
+
+variable "ecr_image" {
+  description = "Url of the ECR repo, including the tag, for the Sombra image"
+  default     = "829095311197.dkr.ecr.eu-west-1.amazonaws.com/sombra:prod"
 }
 
-variable "certificate_arn" {
-  description = "Arn of the ACM cert that exists on the ALB"
+variable "deploy_llm" {
+  description = "If true, the LLM Classifier will be deployed. Note that this has considerable cost implications"
+  default     = false
 }
 
-variable "subdomain" {
-  description = <<EOF
-  The subdomain to create the sombra services at.
-
-  If subdomain is "sombra" and the root_domain is "test.com" then
-  the sombra services would be available at "sombra.test.com"
-  EOF
+variable "project_id" {
+  description = "A name to use in resources, such as the name of your company."
+  default     = "sombra"
 }
 
-variable "root_domain" {
-  description = <<EOF
-  The root domain to create the sombra services at.
-
-  If subdomain is "sombra" and the root_domain is "test.com" then
-  the sombra services would be available at "sombra.test.com"
-  EOF
+variable "llm_classifier_ecr_image" {
+  description = "Url of the ECR repo, including the tag, for the LLM Classifier"
+  default     = "829095311197.dkr.ecr.eu-west-1.amazonaws.com/llm-classifier:prod"
 }
 
-variable "deploy_env" {
-  description = "The environment to deploy to, usually dev, staging, or prod"
+variable "llm_classifier_instance_type" {
+  description = "The instance type to use for the LLM Classifier, which requires a GPU"
+  default     = "g5.2xlarge"
 }
 
 variable "data_subject_auth_methods" {
   type        = list(string)
   description = "Supported data subject authentication methods"
+  default     = ["transcend", "session"]
+}
+
+variable "deploy_env" {
+  description = "The environment to deploy to, usually dev, staging, or prod"
+  default     = "prod"
 }
 
 variable "employee_auth_methods" {
   type        = list(string)
   description = "Supported customer employee authentication methods"
+  default     = ["transcend", "session"]
 }
-
-variable "tls_config" {
-  type = object({
-    passphrase = string
-    cert       = string
-    key        = string
-  })
-  default = {
-    passphrase = null
-    cert       = null
-    key        = null
-  }
-  description = <<EOF
-  Sombra TLS Support. These values are sensitive, and should be kept secret.
-
-  We support quite a few options for this:
-  - Not configuring TLS at all, by leaving this variable empty. This is not recommended,
-    but is the easiest to setup. If you choose to go this route, you will rely on the TLS termination
-    at the load balancer only, and your communication from the ALB -> sombra instances will be unencrypted
-    inside your VPC.
-  - Adding a cert and key without a passphrase. To do this, add your cert and key here (as base64 encoded values)
-    and set the passphrase to either `null` or the empty string. This approach works well for those using the
-    `tls` terraform provider for generating certs.
-  - Adding a cert with an encoded key with the passphrase to unlock it. To do this, you'll need to manage the certs
-    fully on your own, but you can add the certs here as base64 encoded values (passphrase in plaintext). 
-    This is how we recommend you manage your TLS support.
-  EOF
-}
-
-######################
-# Optional Variables #
-######################
 
 variable "cluster_id" {
   description = "ID of the ECS cluster this service should run in"
@@ -142,30 +100,6 @@ variable "cluster_namespace" {
   default     = ""
 }
 
-variable "alb_access_logs" {
-  description = "Map containing access logging configuration for the load balancer."
-  type        = map(string)
-  default     = {}
-}
-
-variable "incoming_cidr_ranges" {
-  type        = list(string)
-  description = <<EOF
-  If you want to restrict the IP addresses that can talk to the
-  internal sombra service, you can do so with this cidr block.
-
-  Oftentimes, this will be the cidr block of the VPC containing the
-  application you are calling the sombra api from.
-  EOF
-  default     = ["0.0.0.0/0"]
-}
-
-variable "transcend_backend_ips" {
-  type        = list(string)
-  default     = ["52.215.231.215/32", "63.34.48.255/32", "34.249.254.13/32", "54.75.178.77/32"]
-  description = "The IP addresses of Transcend"
-}
-
 variable "use_local_kms" {
   default     = true
   description = "When true, local KMS will be used. When false, AWS will be used"
@@ -175,23 +109,14 @@ variable "jwt_ecdsa_key" {
   default     = ""
   description = <<EOF
   The JSON Web Token asymmetric key for signing Sombra payloads, using the Elliptic
-  Curve Digital Signature Algorithm"
+  Curve Digital Signature Algorithm.
+  Generated via `openssl ecparam -genkey -name secp384r1 -noout | (base64 --wrap=0 2>/dev/null || base64 -b 0)`
   EOF
 }
 
 variable "internal_key_hash" {
   default     = ""
   description = "This will override the generated internal key"
-}
-
-variable "transcend_backend_url" {
-  default     = "https://api.transcend.io:443"
-  description = "URL of Transcend's backend"
-}
-
-variable "transcend_certificate_common_name" {
-  default     = "*.transcend.io"
-  description = "Transcend's certificate Common NameTranscend's certificate Common Name"
 }
 
 variable "saml_config" {
@@ -270,16 +195,6 @@ variable "jwt_authentication_public_key" {
 variable "aws_region" {
   description = "The AWS region to deploy resources to"
   default     = "eu-west-1"
-}
-
-variable "internal_port" {
-  description = "The port the internal sombra should run on. This is the server that your internal services will have access to."
-  default     = 443
-}
-
-variable "external_port" {
-  description = "The port the external sombra should run on, this is the server that only Transcend's API talks to."
-  default     = 5041
 }
 
 variable "llm_classifier_port" {
@@ -374,30 +289,6 @@ variable "extra_task_policy_arns" {
   default     = []
 }
 
-variable "use_private_load_balancer" {
-  type        = bool
-  default     = false
-  description = <<EOF
-  If true, the internal load balancer will not have publically accessible DNS.
-
-  Use this if you plan to put this module into the same VPC as your backend,
-  or if you want to set up VPC Peering from your backend to the VPC that holds
-  the Sombra load balancers.
-  EOF
-}
-
-variable "override_alb_name" {
-  type        = string
-  default     = null
-  description = "If set as a string, this custom name will be used on the alb resources"
-}
-
-variable "idle_timeout" {
-  type        = number
-  default     = 60
-  description = "The time in seconds that the connection is allowed to be idle"
-}
-
 variable "extra_envs" {
   type        = map(string)
   description = <<EOF
@@ -427,44 +318,10 @@ variable "extra_secret_envs" {
   default     = {}
 }
 
-variable "use_network_load_balancer" {
-  type        = bool
-  description = <<EOF
-  If true, the internal load balancer will use a Network Load Balancer instead of an Application Load Balancer.
-
-  Use this if you plan to terminate SSL on the sombra itself, and not on the load balancer. This should always be
-  used with `tls_config`.
-  EOF
-  default     = false
-}
-
-variable "network_load_balancer_ingress_cidr_blocks" {
-  type        = list(string)
-  description = "CIDR blocks that can talk to sombra when using an NLB"
-  default     = ["0.0.0.0/0"]
-}
-
-variable "tags" {
-  type        = map(string)
-  description = "Tags to apply to all resources that support them"
-  default     = {}
-}
-
-
-#####################
-# Scaling Variables #
-#####################
-
 variable "desired_count" {
   type        = number
   description = "If not using Application Auto-scaling, the number of tasks to keep alive at all times"
   default     = null
-}
-
-variable "use_autoscaling" {
-  type        = bool
-  description = "Use Application Auto-scaling to scale service"
-  default     = false
 }
 
 variable "min_desired_count" {
@@ -479,32 +336,19 @@ variable "max_desired_count" {
   default     = null
 }
 
-variable "scaling_target_value" {
-  type        = number
-  description = "If using Application auto-scaling, the target value to hit for the Auto-scaling policy"
-  default     = null
-}
-
-variable "scaling_metric" {
-  type        = string
-  description = "If using Application auto-scaling, the pre-defined AWS metric to use for the Auto-scaling policy"
-  default     = "ALBRequestCountPerTarget"
-}
-
-variable "health_check_protocol" {
-  type        = string
-  description = "HTTP/HTTPS protocol to use on the health check"
-  default     = "HTTPS"
-}
-
 variable "roles_to_assume" {
   type        = list(string)
   description = "AWS IAM Roles that sombra can assume, used in AWS integrations"
   default     = []
 }
 
-variable "ssl_policy" {
-  type        = string
-  description = "The Security Policy to use for SSL on the load balancers"
-  default     = "ELBSecurityPolicy-TLS-1-2-Ext-2018-06"
+variable "internal_port" {
+  description = "The port the internal sombra should run on. This is the server that your internal services will have access to."
+  default     = 443
+}
+
+variable "tags" {
+  type        = map(string)
+  description = "Tags to apply to all resources that support them"
+  default     = {}
 }

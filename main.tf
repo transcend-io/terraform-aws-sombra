@@ -1,44 +1,3 @@
-#################
-# Load Balancer #
-#################
-
-module "load_balancer" {
-  source = "./modules/sombra_load_balancers"
-
-  # General Settings
-  override_alb_name = var.override_alb_name
-  deploy_env        = var.deploy_env
-  project_id        = var.project_id
-  alb_access_logs   = var.alb_access_logs
-  idle_timeout      = var.idle_timeout
-  ssl_policy        = var.ssl_policy
-
-  # Health check settings
-  health_check_protocol = var.health_check_protocol
-
-  # Ports and Firewall settings
-  internal_port         = var.internal_port
-  external_port         = var.external_port
-  transcend_backend_ips = var.transcend_backend_ips
-  incoming_cidr_ranges  = var.incoming_cidr_ranges
-
-  # VPC settings
-  vpc_id                      = var.vpc_id
-  public_subnet_ids           = var.public_subnet_ids
-  private_subnet_ids          = var.private_subnet_ids
-  private_subnets_cidr_blocks = var.private_subnets_cidr_blocks
-
-  # DNS Settings
-  subdomain                 = var.subdomain
-  root_domain               = var.root_domain
-  zone_id                   = var.zone_id
-  certificate_arn           = var.certificate_arn
-  use_private_load_balancer = var.use_private_load_balancer
-  use_network_load_balancer = var.use_network_load_balancer
-
-  tags = var.tags
-}
-
 ############
 # ECS Task #
 ############
@@ -49,12 +8,11 @@ module "container_definition" {
 
   name           = "${var.deploy_env}-${var.project_id}-container"
   image          = var.ecr_image
-  containerPorts = [var.internal_port, var.external_port]
+  containerPorts = [var.internal_port]
   ssm_prefix     = var.project_id
 
   portNames = tomap({
     tostring(var.internal_port) = "internalSombra",
-    tostring(var.external_port) = "externalSombra"
   })
 
   use_cloudwatch_logs = var.use_cloudwatch_logs
@@ -67,15 +25,9 @@ module "container_definition" {
 
   environment = merge({
     # General Settings
-    EXTERNAL_PORT_HTTPS = var.external_port
-    INTERNAL_PORT_HTTPS = var.internal_port
-    EXTERNAL_PORT_HTTP  = var.external_port
-    INTERNAL_PORT_HTTP  = var.internal_port
-    USE_TLS_AUTH        = false
-
     LLM_CLASSIFIER_URL = var.deploy_llm ? "http://llm-classifier:${var.llm_classifier_port}" : null
 
-    # JWT
+    # JWT Auth Settings
     JWT_AUTHENTICATION_PUBLIC_KEY = var.jwt_authentication_public_key
 
     # AWS KMS
@@ -88,12 +40,12 @@ module "container_definition" {
 
     NODE_ENV      = "production"
     TRANSCEND_URL = var.transcend_backend_url
-    TRANSCEND_CN  = var.transcend_certificate_common_name
     LOG_LEVEL     = var.log_level
 
     # Global Settings
     ORGANIZATION_URI                    = var.organization_uri
     SOMBRA_ID                           = var.sombra_id
+    SOMBRA_REVERSE_TUNNEL_API_KEY       = var.sombra_reverse_tunnel_api_key
     DATA_SUBJECT_AUTHENTICATION_METHODS = join(",", var.data_subject_auth_methods)
     EMPLOYEE_AUTHENTICATION_METHODS     = join(",", var.employee_auth_methods)
 
@@ -123,9 +75,6 @@ module "container_definition" {
     for key, val in {
       OAUTH_CLIENT_SECRET       = var.oauth_config.secret_id
       JWT_ECDSA_KEY             = var.jwt_ecdsa_key
-      SOMBRA_TLS_KEY            = var.tls_config.key
-      SOMBRA_TLS_KEY_PASSPHRASE = var.tls_config.passphrase
-      SOMBRA_TLS_CERT           = var.tls_config.cert
     } :
     key => val
     if try(length(val) > 0, false)
@@ -139,11 +88,6 @@ module "container_definition" {
 ###############
 # ECS Service #
 ###############
-
-locals {
-  split_external_target_arn = split(":", module.load_balancer.external_target_group_arn)
-  potential_resource_id     = "${module.load_balancer.arn_suffix}/${element(local.split_external_target_arn, length(local.split_external_target_arn) - 1)}"
-}
 
 module "service" {
   source  = "transcend-io/fargate-service/aws"
@@ -159,7 +103,6 @@ module "service" {
 
   vpc_id                 = var.vpc_id
   subnet_ids             = var.private_subnet_ids
-  alb_security_group_ids = module.load_balancer.security_group_ids
   container_definitions = format(
     "[%s]",
     join(",", distinct(concat(
@@ -176,33 +119,10 @@ module "service" {
   )
   additional_task_policy_arns_count = 2 + length(var.extra_task_policy_arns) + (length(var.roles_to_assume) > 0 ? 1 : 0)
 
-  load_balancers = [
-    # Internal target group manager
-    {
-      target_group_arn = module.load_balancer.internal_target_group_arn
-      container_name   = module.container_definition.container_name
-      container_port   = var.internal_port
-      security_groups  = var.use_network_load_balancer ? [] : null
-      cidr_blocks      = var.use_network_load_balancer ? var.network_load_balancer_ingress_cidr_blocks : null
-    },
-    # External target group manager
-    {
-      target_group_arn = module.load_balancer.external_target_group_arn
-      container_name   = module.container_definition.container_name
-      container_port   = var.external_port
-      security_groups  = module.load_balancer.security_group_ids
-      cidr_blocks      = []
-    }
-  ]
-
   # Scaling configuration.
   desired_count                  = var.desired_count
-  use_autoscaling                = var.use_autoscaling
   min_desired_count              = var.min_desired_count
   max_desired_count              = var.max_desired_count
-  scaling_target_value           = var.scaling_target_value
-  scaling_metric                 = var.scaling_metric
-  alb_scaling_target_resource_id = var.scaling_metric == "ALBRequestCountPerTarget" ? local.potential_resource_id : null
 
   deploy_env = var.deploy_env
   aws_region = var.aws_region
