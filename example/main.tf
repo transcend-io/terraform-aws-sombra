@@ -41,5 +41,7 @@ module "sombra" {
 
   # The root secrets that you should generate yourself and keep secret
   # Can be generated via: `openssl ecparam -genkey -name secp384r1 -noout | (base64 --wrap=0 2>/dev/null || base64 -b 0)`
+  # This can come from a secret store like AWS Secrets Manager or Vault
+  # See our guide for dynamically loading secrets from vault here: https://docs.transcend.io/docs/articles/security/end-to-end-encryption/hashicorp-vault-secret-fetching
   jwt_ecdsa_key     = "LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1JR2tBZ0VCQkRCT0JkNExXVzNaTkJXOWhyTUJ4YlJUemx0SjZjWitIMm5GM3FybDgwdnpLbG1yMnFkRzU5YTUKOU1vWTJhWTJYWVNnQndZRks0RUVBQ0toWkFOaUFBUTBQOUI5Nm9FaVZhWmo3RnhRWThtM1JaMnRRRkVNaUhaWgpKTXk0NjdBcEJiRFRJZkpHRWh3MjAvcnljS3gxY25CUzRqYk5rdTVLNHh0TlpSMDcwVHNFWkREVmh3Y3kxNWRkCktWaDJGcVZvczkxVjVCSVUyK0xENUpYUGUweUVtM1U9Ci0tLS0tRU5EIEVDIFBSSVZBVEUgS0VZLS0tLS0K"
 }
