@@ -48,7 +48,10 @@ module "container_definition" {
     DATA_SUBJECT_AUTHENTICATION_METHODS = join(",", var.data_subject_auth_methods)
     EMPLOYEE_AUTHENTICATION_METHODS     = join(",", var.employee_auth_methods)
     INTERNAL_PORT                       = var.internal_port
-    SOMBRA_REVERSE_TUNNEL_USE_HTTPS     = var.sombra_reverse_tunnel_use_https
+
+    # TLS Settings
+    SOMBRA_REVERSE_TUNNEL_USE_HTTPS                = var.sombra_reverse_tunnel_use_https
+    SOMBRA_REVERSE_TUNNEL_TLS_INSECURE_SKIP_VERIFY = var.sombra_reverse_tunnel_use_https
 
     # Employee Single Sign On
     SAML_ENTRYPOINT             = var.saml_config.entrypoint
