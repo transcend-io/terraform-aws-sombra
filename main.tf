@@ -49,11 +49,6 @@ module "container_definition" {
     EMPLOYEE_AUTHENTICATION_METHODS     = join(",", var.employee_auth_methods)
     INTERNAL_PORT                       = var.internal_port
 
-    # TLS Settings
-    SOMBRA_REVERSE_TUNNEL_USE_HTTPS                = var.sombra_reverse_tunnel_use_https
-    SOMBRA_REVERSE_TUNNEL_TLS_INSECURE_SKIP_VERIFY = var.sombra_reverse_tunnel_use_https
-    EXTERNAL_PORT_HTTP                             = var.sombra_reverse_tunnel_use_https ? 5041 : 5042
-
     # Employee Single Sign On
     SAML_ENTRYPOINT             = var.saml_config.entrypoint
     SAML_ISSUER                 = var.saml_config.issuer

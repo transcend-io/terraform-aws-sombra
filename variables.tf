@@ -347,11 +347,6 @@ variable "internal_port" {
   default     = 443
 }
 
-variable "sombra_reverse_tunnel_use_https" {
-  description = "If true, the reverse tunnel will use HTTPS. If false, it will use HTTP"
-  default     = true
-}
-
 variable "tags" {
   type        = map(string)
   description = "Tags to apply to all resources that support them"
