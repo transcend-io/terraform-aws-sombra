@@ -37,7 +37,7 @@ Please note that there are considerable cost implications, as the LLM Classifier
 
 ## Examples
 
-We have an example of deploying soombra in the `./example` folder`.
+We have an example of deploying sombra in the `./example` folder`.
 
 ## Releases
 
