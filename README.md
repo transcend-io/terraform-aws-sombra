@@ -16,7 +16,8 @@
 </p>
 <br />
 
-> Note: We now recommend using our Helm chart to deploy Sombra: https://github.com/transcend-io/helm-charts. This module still works in many cases, but may not always be fully up-to-date.
+> [!NOTE]
+> We now recommend using our Helm chart to deploy Sombra: https://github.com/transcend-io/helm-charts. This module still works in many cases, but may not always be fully up-to-date.
 
 ## Motivation
 
