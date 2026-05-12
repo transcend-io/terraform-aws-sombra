@@ -44,8 +44,13 @@ module "load_balancer" {
 ############
 
 module "container_definition" {
-  source  = "transcend-io/fargate-container/aws"
-  version = "1.9.2"
+  source = "transcend-io/fargate-container/aws"
+  # Bumped from 1.9.2 to pick up `versionConsistency = "disabled"` on the
+  # rendered container definition, which prevents the failure mode where
+  # ECS pins an active deployment to an image digest that ECR's lifecycle
+  # policy later deletes. See transcend-io/terraform-aws-fargate-container#PR
+  # and the 2026-05-05 prod-multi-tenant-sombra-service incident for context.
+  version = "1.11.0"
 
   name           = "${var.deploy_env}-${var.project_id}-container"
   image          = var.ecr_image
