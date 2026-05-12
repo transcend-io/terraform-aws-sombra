@@ -45,17 +45,25 @@ module "load_balancer" {
 
 module "container_definition" {
   source = "transcend-io/fargate-container/aws"
-  # Bumped from 1.9.2 to pick up `versionConsistency = "disabled"` on the
-  # rendered container definition, which prevents the failure mode where
-  # ECS pins an active deployment to an image digest that ECR's lifecycle
-  # policy later deletes. See transcend-io/terraform-aws-fargate-container#PR
-  # and the 2026-05-05 prod-multi-tenant-sombra-service incident for context.
+  # Bumped from 1.9.2 to gain support for the optional `version_consistency`
+  # passthrough variable. The default behavior is unchanged (the field is
+  # only rendered when callers explicitly set
+  # `var.sombra_container_version_consistency` on this module). See
+  # transcend-io/terraform-aws-fargate-container#PR for the upstream
+  # passthrough; the 2026-05-05 prod-multi-tenant-sombra-service incident
+  # is the original motivation for exposing this knob.
   version = "1.11.0"
 
   name           = "${var.deploy_env}-${var.project_id}-container"
   image          = var.ecr_image
   containerPorts = [var.internal_port, var.external_port]
   ssm_prefix     = var.project_id
+
+  # Forward the optional ECS `versionConsistency` value to the rendered
+  # container definition. Default is null, which means no field is
+  # rendered and the AWS default (deployment-pinned digest) applies — i.e.
+  # this is a no-op for any consumer that does not opt in.
+  version_consistency = var.sombra_container_version_consistency
 
   use_cloudwatch_logs = var.use_cloudwatch_logs
   log_configuration   = var.log_configuration

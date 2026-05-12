@@ -478,3 +478,29 @@ variable "ssl_policy" {
   description = "The Security Policy to use for SSL on the load balancers"
   default     = "ELBSecurityPolicy-TLS-1-2-Ext-2018-06"
 }
+variable "sombra_container_version_consistency" {
+  type        = string
+  default     = null
+  description = <<EOF
+Optional value forwarded to the embedded `transcend-io/fargate-container/aws`
+module's `version_consistency` input, which controls the ECS container
+definition's `versionConsistency` field on the rendered sombra app
+container. When null (the default), the field is not rendered and AWS's
+default behavior applies (ECS pins the resolved image digest for every task
+in the active deployment). Set to "disabled" to make ECS re-resolve the
+floating image tag on every task launch — useful when the upstream image
+is re-tagged frequently (e.g. ":prod") and ECR lifecycle rules may
+garbage-collect a digest while a deployment still references it.
+
+See:
+- https://docs.aws.amazon.com/AmazonECS/latest/developerguide/version-consistency.html
+- transcend-io/terraform-aws-fargate-container#PR (the upstream variable)
+
+Valid values: null, "enabled", "disabled".
+EOF
+
+  validation {
+    condition     = var.sombra_container_version_consistency == null || contains(["enabled", "disabled"], var.sombra_container_version_consistency)
+    error_message = "sombra_container_version_consistency must be null, \"enabled\", or \"disabled\"."
+  }
+}
