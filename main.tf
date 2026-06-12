@@ -4,7 +4,7 @@
 
 module "container_definition" {
   source  = "transcend-io/fargate-container/aws"
-  version = "1.10.0"
+  version = "1.11.0"
 
   name           = "${var.deploy_env}-${var.project_id}-container"
   image          = var.ecr_image
@@ -14,6 +14,8 @@ module "container_definition" {
   portNames = tomap({
     tostring(var.internal_port) = "internalSombra",
   })
+
+  version_consistency = var.sombra_container_version_consistency
 
   use_cloudwatch_logs = var.use_cloudwatch_logs
   log_configuration   = var.log_configuration
@@ -81,6 +83,8 @@ module "container_definition" {
     if try(length(val) > 0, false)
   }, var.extra_secret_envs)
 
+  mount_points = var.extra_sombra_container_mount_points
+
   deploy_env = var.deploy_env
   aws_region = var.aws_region
   tags       = var.tags
@@ -119,6 +123,8 @@ module "service" {
     length(var.roles_to_assume) > 0 ? [aws_iam_policy.aws_policy[0].arn] : [],
   )
   additional_task_policy_arns_count = 2 + length(var.extra_task_policy_arns) + (length(var.roles_to_assume) > 0 ? 1 : 0)
+
+  volumes = var.extra_volumes
 
   # Scaling configuration.
   desired_count                  = var.desired_count

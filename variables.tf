@@ -352,3 +352,63 @@ variable "tags" {
   description = "Tags to apply to all resources that support them"
   default     = {}
 }
+
+variable "sombra_container_version_consistency" {
+  type        = string
+  default     = null
+  description = <<EOF
+Optional value forwarded to the embedded `transcend-io/fargate-container/aws`
+module's `version_consistency` input, which controls the ECS container
+definition's `versionConsistency` field on the rendered sombra app
+container. When null (the default), the field is not rendered and AWS's
+default behavior applies (ECS pins the resolved image digest for every task
+in the active deployment). Set to "disabled" to make ECS re-resolve the
+floating image tag on every task launch — useful when the upstream image
+is re-tagged frequently (e.g. ":prod") and ECR lifecycle rules may
+garbage-collect a digest while a deployment still references it.
+
+Valid values: null, "enabled", "disabled".
+EOF
+
+  validation {
+    condition     = var.sombra_container_version_consistency == null || contains(["enabled", "disabled"], var.sombra_container_version_consistency)
+    error_message = "sombra_container_version_consistency must be null, \"enabled\", or \"disabled\"."
+  }
+}
+
+variable "extra_volumes" {
+  type        = list(map(string))
+  description = <<EOF
+  List of additional task-level ECS volumes to attach to the Sombra task definition.
+  Each entry is a map with a "name" key (and optionally "host_path" for bind-mount
+  volumes; omit host_path for ephemeral volumes).
+
+  Example (ephemeral seneca-run volume for OPA token-file sharing):
+    extra_volumes = [{ name = "seneca-run" }]
+
+  See: https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_Volume.html
+  EOF
+  default     = []
+}
+
+variable "extra_sombra_container_mount_points" {
+  type = list(object({
+    sourceVolume  = string
+    containerPath = string
+    readOnly      = bool
+  }))
+  description = <<EOF
+  Additional mount points to attach to the Sombra container definition.
+  Each entry must reference a volume name defined in var.extra_volumes (or any
+  other volume already present in the task definition).
+
+  Example (mount the seneca-run volume read-write so Sombra can write the
+  OPA bundle token):
+    extra_sombra_container_mount_points = [{
+      sourceVolume  = "seneca-run"
+      containerPath = "/run/seneca"
+      readOnly      = false
+    }]
+  EOF
+  default = []
+}
