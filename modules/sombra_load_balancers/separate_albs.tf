@@ -2,7 +2,7 @@
 # Internal, Private Load Balancer #
 ###################################
 
-module internal_load_balancer {
+module "internal_load_balancer" {
   source  = "terraform-aws-modules/alb/aws"
   version = "5.10.0"
 
@@ -48,6 +48,7 @@ module internal_load_balancer {
     health_check = {
       enabled  = true
       interval = 30
+      timeout  = var.health_check_timeout
       port     = var.internal_port
       path     = "/health"
       protocol = var.health_check_protocol
@@ -116,7 +117,7 @@ resource "aws_route53_record" "alb_alias" {
 # External, Transcend Facing Load Balancer #
 ############################################
 
-module external_load_balancer {
+module "external_load_balancer" {
   source  = "terraform-aws-modules/alb/aws"
   version = "5.10.0"
 
@@ -148,6 +149,7 @@ module external_load_balancer {
     health_check = {
       enabled  = true
       interval = 30
+      timeout  = var.health_check_timeout
       port     = var.external_port
       path     = "/health"
       protocol = var.health_check_protocol

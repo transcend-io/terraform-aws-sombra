@@ -467,6 +467,21 @@ variable "health_check_protocol" {
   default     = "HTTPS"
 }
 
+variable "health_check_timeout" {
+  type        = number
+  description = <<EOF
+  The amount of time, in seconds, the ALB waits for a `/health` response before
+  considering a single health check a failure. Must be less than the (fixed) 30s
+  health check interval.
+
+  The default of 5 matches the previous AWS default. Raise this for services whose
+  event loop can be briefly blocked by slow synchronous/native work (e.g. ODBC
+  queries to slow customer databases) so transient stalls don't fail health checks
+  and trigger task replacement.
+  EOF
+  default     = 5
+}
+
 variable "roles_to_assume" {
   type        = list(string)
   description = "AWS IAM Roles that sombra can assume, used in AWS integrations"

@@ -15,6 +15,7 @@ module "load_balancer" {
 
   # Health check settings
   health_check_protocol = var.health_check_protocol
+  health_check_timeout  = var.health_check_timeout
 
   # Ports and Firewall settings
   internal_port         = var.internal_port
