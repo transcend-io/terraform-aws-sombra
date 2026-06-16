@@ -1,4 +1,4 @@
-variable use_private_load_balancer {
+variable "use_private_load_balancer" {
   type        = bool
   description = <<EOF
   If true, the internal load balancer will not have publically accessible DNS.
@@ -9,7 +9,7 @@ variable use_private_load_balancer {
   EOF
 }
 
-variable use_network_load_balancer {
+variable "use_network_load_balancer" {
   type        = bool
   description = <<EOF
   If true, the internal load balancer will use a Network Load Balancer instead of an Application Load Balancer.
@@ -17,14 +17,14 @@ variable use_network_load_balancer {
   Use this if you plan to terminate SSL on the sombra itself, and not on the load balancer. This should always be
   used with `tls_config` on the root module.
   EOF
-  default = false
+  default     = false
 }
 
-variable deploy_env {
+variable "deploy_env" {
   description = "The environment to deploy to, usually dev, staging, or prod"
 }
 
-variable project_id {
+variable "project_id" {
   description = "A name to use in resources, such as the name of your company."
 }
 
@@ -34,27 +34,27 @@ variable "alb_access_logs" {
   default     = {}
 }
 
-variable certificate_arn {
+variable "certificate_arn" {
   description = "Arn of the ACM cert that exists on the ALB"
 }
 
-variable internal_port {
+variable "internal_port" {
   description = "The port the internal sombra should run on. This is the server that your internal services will have access to."
   default     = 443
 }
 
-variable external_port {
+variable "external_port" {
   description = "The port the external sombra should run on, this is the server that only Transcend's API talks to."
   default     = 5041
 }
 
-variable transcend_backend_ips {
+variable "transcend_backend_ips" {
   type        = list(string)
   default     = ["52.215.231.215/32", "63.34.48.255/32", "34.249.254.13/32", "54.75.178.77/32"]
   description = "The IP addresses of Transcend"
 }
 
-variable incoming_cidr_ranges {
+variable "incoming_cidr_ranges" {
   type        = list(string)
   description = <<EOF
   If you want to restrict the IP addresses that can talk to the
@@ -66,26 +66,26 @@ variable incoming_cidr_ranges {
   default     = ["0.0.0.0/0"]
 }
 
-variable vpc_id {
+variable "vpc_id" {
   description = "The ID of the VPC to put the load balancer(s) into"
 }
 
-variable public_subnet_ids {
+variable "public_subnet_ids" {
   type        = list(string)
   description = "The subnets the external ALB can be placed into"
 }
 
-variable private_subnet_ids {
+variable "private_subnet_ids" {
   type        = list(string)
   description = "The subnets the ECS tasks can be placed into, as well as the internal load balancer if desired"
 }
 
-variable private_subnets_cidr_blocks {
+variable "private_subnets_cidr_blocks" {
   type        = list(string)
   description = "CIDR blocks that an ECS task could be in"
 }
 
-variable subdomain {
+variable "subdomain" {
   description = <<EOF
   The subdomain to create the sombra services at.
 
@@ -94,7 +94,7 @@ variable subdomain {
   EOF
 }
 
-variable root_domain {
+variable "root_domain" {
   description = <<EOF
   The root domain to create the sombra services at.
 
@@ -103,19 +103,19 @@ variable root_domain {
   EOF
 }
 
-variable zone_id {
+variable "zone_id" {
   description = "The ID of the Route53 hosted zone where the public sombra subdomain will be created"
 }
 
-variable override_alb_name {
+variable "override_alb_name" {
   type        = string
   default     = null
   description = "If set as a string, this custom name will be used on the alb resources"
 }
 
 variable "idle_timeout" {
-  type = number
-  default = 60
+  type        = number
+  default     = 60
   description = "The time in seconds that the connection is allowed to be idle"
 }
 
@@ -125,13 +125,19 @@ variable "health_check_protocol" {
   default     = "HTTPS"
 }
 
+variable "health_check_timeout" {
+  type        = number
+  description = "The amount of time, in seconds, the ALB waits for a /health response before considering a single health check a failure. Must be less than the 30s health check interval."
+  default     = 5
+}
+
 variable "ssl_policy" {
   type        = string
   description = "The Security Policy to use for SSL on the load balancers"
   default     = "ELBSecurityPolicy-TLS-1-2-Ext-2018-06"
 }
 
-variable tags {
+variable "tags" {
   type        = map(string)
   description = "Tags to apply to all resources that support them"
   default     = {}
